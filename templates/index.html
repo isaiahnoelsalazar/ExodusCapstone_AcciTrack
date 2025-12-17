@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>AcciTrack</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}"/>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="logo">
+            <img src="{{ url_for('static', filename='images/Logo.png') }}" alt="AcciTrack Logo" class="logo-img"/>
+            <div class="logo-text">
+                <div class="logo-main">AcciTrack</div>
+                <div class="logo-sub">Command Center</div>
+            </div>
+        </div>
+        <nav class="sidebar-menu">
+            <button type="button" class="menu-item active" onclick="tabClick(0)">
+                <i class="fa-solid fa-gauge-high"></i>
+                <span>Dashboard</span>
+            </button>
+            <button type="button" class="menu-item" onclick="tabClick(1)">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <span>Incidents</span>
+            </button>
+            <button type="button" class="menu-item" onclick="tabClick(2)">
+                <i class="fa-solid fa-file-lines"></i>
+                <span>Reports</span>
+            </button>
+            <button type="button" class="menu-item" onclick="tabClick(3)">
+                <i class="fa-solid fa-user-shield"></i>
+                <span>Profile</span>
+            </button>
+            <button type="button" class="menu-item" onclick="tabClick(4)">
+                <i class="fa-solid fa-bell"></i>
+                <span>Notifications</span>
+            </button>
+        </nav>
+        <div class="officer-card">
+            <p>Officer Manhattan</p>
+            <small>Badge #1030</small>
+        </div>
+    </aside>
+    <header class="top-header">
+        <div class="header-left">
+            <h2 id="greeting">Good Evening, Officer Manhattan!</h2>
+            <p id="datetime">Loading...</p>
+            <input type="text" placeholder="Search incidents, cases, officers..." class="search"/>
+        </div>
+        <div class="header-right">
+            <div class="live-indicator">
+                <span class="pulse"></span>
+                <small>LIVE</small>
+            </div>
+            <div class="profile profile-text">
+                <div class="profile-info">
+                    <strong>Officer Manhattan</strong>
+                    <small>On Duty</small>
+                </div>
+                <i class="fa-solid fa-chevron-down"></i>
+            </div>
+        </div>
+    </header>
+    <div class="main dashboard">
+        <section class="cards">
+            <div class="card stat red">
+                <div class="icon">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                </div>
+                <div>
+                    <h3>24</h3>
+                    <p>Recent Incidents</p>
+                    <small>+3 from yesterday</small>
+                </div>
+            </div>
+            <div class="card stat green">
+                <div class="icon">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+                <div>
+                    <h3>18</h3>
+                    <p>Resolved Today</p>
+                    <small>+12% from yesterday</small>
+                </div>
+            </div>
+            <div class="card stat yellow">
+                <div class="icon">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <div>
+                    <h3>47</h3>
+                    <p>Personnel on Duty</p>
+                    <small>Real-time update</small>
+                </div>
+            </div>
+            <div class="card stat blue">
+                <div class="icon">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+                <div>
+                    <h3>8.5m</h3>
+                    <p>Avg Response Time</p>
+                    <small>Improved 15%</small>
+                </div>
+            </div>
+        </section>
+        <section class="content-grid">
+            <div class="panel quick-actions">
+                <h3>Quick Actions</h3>
+                <small>Frequently used actions</small>
+                <div class="quick-actions-grid">
+                    <button type="button" class="qa-btn primary" onclick="tabClick(2)">
+                        <i class="fa-solid fa-plus"></i>
+                        <div class="qa-text">
+                            <strong>New Incident</strong>
+                            <span>Report incident</span>
+                        </div>
+                    </button>
+                    <button type="button" class="qa-btn secondary" onclick="tabClick(2)">
+                        <i class="fa-solid fa-file-lines"></i>
+                        <div class="qa-text">
+                            <strong>Create Report</strong>
+                            <span>Generate report</span>
+                        </div>
+                    </button>
+                    <button type="button" class="qa-btn secondary" onclick="tabClick(0)">
+                        <i class="fa-solid fa-clipboard-list"></i>
+                        <div class="qa-text">
+                            <strong>Checklist</strong>
+                            <span>Daily Checklist</span>
+                        </div>
+                    </button>
+                    <button type="button" class="qa-btn primary" onclick="tabClick(4)">
+                        <i class="fa-solid fa-bell bell-ring"></i>
+                        <div class="qa-text">
+                            <strong>Notifications</strong>
+                            <span>Review Submissions</span>
+                        </div>
+                    </button>
+                </div>
+                <div class="priority-tasks">
+                    <div class="section-title">
+                        <i class="fa-solid fa-list-check"></i>
+                        <strong>Today's Priority Tasks</strong>
+                        <span class="task-count" id="taskCount">0</span>
+                    </div>
+                    <div class="task-list" id="taskList">
+                        <!-- <div class="task-item high">
+                            <i class="fa-solid fa-circle-dot"></i>
+                            <div class="task-content">
+                                <strong>Review EDSA Collision Footage</strong>
+                                <small>Bodycam #47 • Due in 2 hrs</small>
+                            </div>
+                            <span class="task-badge">URGENT</span>
+                            <button class="delete-task-btn" title="Delete task">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                        <div class="task-item medium">
+                            <i class="fa-solid fa-circle-dot"></i>
+                            <div class="task-content">
+                                <strong>Submit Monthly Traffic Report</strong>
+                                <small>Draft ready • 14 pages</small>
+                            </div>
+                            <button class="delete-task-btn" title="Delete task">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                        <div class="task-item low">
+                            <i class="fa-solid fa-circle-dot"></i>
+                            <div class="task-content">
+                                <strong>Calibrate Bodycam Units</strong>
+                                <small>12/15 units completed</small>
+                            </div>
+                            <button class="delete-task-btn" title="Delete task">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                        <div class="task-item info">
+                            <i class="fa-solid fa-circle-dot"></i>
+                            <div class="task-content">
+                                <strong>Play Zomboid</strong>
+                                <small>Platero Velasco Subdivision • 11:00 PM</small>
+                            </div>
+                            <button class="delete-task-btn" title="Delete task">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div> -->
+                    </div>
+                    <button class="add-task-btn" id="openTaskModal" onclick="openTaskModal()">
+                        <i class="fa-solid fa-plus"></i>
+                        Add New Task
+                    </button>
+                </div>
+            </div>
+            <div class="modal-overlay" id="taskModal">
+                <div class="modal">
+                    <div class="modal-header">
+                        <h3>Add New Task</h3>
+                        <button class="close-btn" id="closeModal" onclick="closeTaskModal()">×</button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="text" id="taskTitle" placeholder="Task title" required>
+                        <input type="text" id="taskDesc" placeholder="Details (optional)">
+                        <select id="taskPriority">
+                            <option value="high">High Priority (Red)</option>
+                            <option value="medium">Medium (Yellow)</option>
+                            <option value="low">Low (Green)</option>
+                            <option value="info">Info (Blue)</option>
+                        </select>
+                        <button onclick="addTask()">Add Task</button>
+                    </div>
+                </div>
+            </div>
+            <div class="panel active-cases">
+                <h3>Active Cases</h3>
+                <small>Currently under investigation</small>
+                <div class="case">
+                    <div class="case-header">
+                        <i class="fa-solid fa-file-lines"></i>
+                        <span class="case-id">CASE-2024-089</span>
+                        <span class="badge high">High</span>
+                    </div>
+                    <div class="case-title">Reckless Driving</div>
+                    <div class="case-officer">Officer Urara</div>
+                    <div class="progress-bar">
+                        <div class="progress" style="width:65%"></div>
+                    </div>
+                    <div class="progress-percent">65%</div>
+                </div>
+                <div class="case">
+                    <div class="case-header">
+                        <i class="fa-solid fa-file-lines"></i>
+                        <span class="case-id">CASE-2024-087</span>
+                        <span class="badge medium">Medium</span>
+                    </div>
+                    <div class="case-title">Hit and Run</div>
+                    <div class="case-officer">Officer Scarlet</div>
+                    <div class="progress-bar">
+                        <div class="progress" style="width:40%"></div>
+                    </div>
+                    <div class="progress-percent">40%</div>
+                </div>
+                <div class="case">
+                    <div class="case-header">
+                        <i class="fa-solid fa-file-lines"></i>
+                        <span class="case-id">CASE-2024-085</span>
+                        <span class="badge high">High</span>
+                    </div>
+                    <div class="case-title">DUI Checkpoint Violation</div>
+                    <div class="case-officer">Officer Tachyon</div>
+                    <div class="progress-bar">
+                        <div class="progress" style="width:80%"></div>
+                    </div>
+                    <div class="progress-percent">80%</div>
+                </div>
+                <div class="case">
+                    <div class="case-header">
+                        <i class="fa-solid fa-file-lines"></i>
+                        <span class="case-id">CASE-2024-082</span>
+                        <span class="badge low">Low</span>
+                    </div>
+                    <div class="case-title">Minor Traffic Accident</div>
+                    <div class="case-officer">Officer Goldship</div>
+                    <div class="progress-bar">
+                        <div class="progress" style="width:90%"></div>
+                    </div>
+                    <div class="progress-percent">90%</div>
+                </div>
+            </div>
+        </section>
+        <section class="recent-incidents-panel panel">
+            <h3>Recent Incidents</h3>
+            <small>Latest reported from body cameras</small>
+            <div class="incident">
+                <div class="incident-header">
+                    <span class="incident-id">INC-2024-1237</span>
+                    <span class="badge high">High</span>
+                    <span class="badge in-progress">In Progress</span>
+                </div>
+                <div class="incident-title">Vehicle Collision Detected</div>
+                <div class="incident-details">
+                    <i class="fa-solid fa-location-dot"></i>
+                    420 Rosewood Highway
+                    <i class="fa-regular fa-clock"></i>
+                    4 mins ago
+                </div>
+            </div>
+            <div class="incident">
+                <div class="incident-header">
+                    <span class="incident-id">INC-2024-1236</span>
+                    <span class="badge medium">Medium</span>
+                    <span class="badge assigned">Assigned</span>
+                </div>
+                <div class="incident-title">Hit and Run – Suspect Fled Scene</div>
+                <div class="incident-details"><i class="fa-solid fa-location-dot"></i> Grand Bellhart Central Mall <i class="fa-regular fa-clock"></i> 17 mins ago</div>
+            </div>
+            <div class="incident">
+                <div class="incident-header"><span class="incident-id">INC-2024-1235</span><span class="badge low">Low</span><span class="badge resolved">Resolved</span></div>
+                <div class="incident-title">Minor Rear-End Collision</div>
+                <div class="incident-details"><i class="fa-solid fa-location-dot"></i> City of Tears Interchange <i class="fa-regular fa-clock"></i> 2 hours ago</div>
+            </div>
+        </section>
+    </div>
+
+    <div class="main incidents">
+        <div class="incident-grid">
+            <div class="video-card">
+                <video controls poster="assets/images/thumbnail.jpg">
+                    <source src="assets/videos/incident-089.mp4" type="video/mp4">
+                </video>
+                <div class="video-caption">
+                    <strong>INC-2024-089</strong>
+                    <p>Multi-Vehicle Collision • EDSA Northbound</p>
+                </div>
+            </div>
+            <div class="details-grid">
+                <div class="detail-card officer">
+                    <div class="icon-circle officer">
+                        <i class="fa-solid fa-user-shield"></i>
+                    </div>
+                    <div class="content">
+                        <h4>Officer who caught the video</h4>
+                        <p>Sgt. Michael Reyes<br>
+                            <small>Badge #0891 • Unit 4A</small>
+                        </p>
+                    </div>
+                </div>
+                <div class="detail-card date">
+                    <div class="icon-circle date">
+                        <i class="fa-solid fa-calendar-check"></i>
+                    </div>
+                    <div class="content">
+                        <h4>Date and Time of Accident</h4>
+                        <p>November 25, 2025<br>
+                            <small>08:47 PM</small>
+                        </p>
+                    </div>
+                </div>
+                <div class="detail-card critical">
+                    <div class="icon-circle critical">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                    <div class="content">
+                        <h4>Type of Accident</h4>
+                        <p>Multi-Vehicle Collision<br>
+                            <span class="badge critical">HIGH PRIORITY</span>
+                        </p>
+                    </div>
+                </div>
+                <div class="detail-card location">
+                    <div class="icon-circle location">
+                        <i class="fa-solid fa-location-dot"></i>
+                    </div>
+                    <div class="content">
+                        <h4>Location of Accident</h4>
+                        <p>EDSA Northbound<br>
+                            <small>near Quezon Avenue MRT Station<br>Quezon City</small>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main reports">
+        <section class="content-grid" style="grid-template-columns: 1fr 1fr 1fr; gap: 32px;">
+            <div class="panel">
+                <div class="section-title-bar">
+                    <h3>Quick Accident Report Templates</h3>
+                    <button class="new-report-btn-inline" onclick="openReportModal()">
+                        <i class="fa-solid fa-plus"></i> New Report
+                    </button>
+                </div>
+                <small>Select incident type to begin</small>
+
+                <div class="templates-grid" style="grid-template-columns: 1fr 1fr 1fr; gap: 18px; margin-top: 20px;">
+                    <button class="template-card">
+                        <i class="fa-solid fa-car-burst" style="color:blue;"></i>
+                        <div class="template-info">
+                            <strong>Minor Traffic Accident</strong>
+                            <span>TCR-01 • Property damage only</span>
+                        </div>
+                    </button>
+                    <button class="template-card">
+                        <i class="fa-solid fa-gauge-high" style="color:#f97316;"></i>
+                        <div class="template-info">
+                            <strong>Reckless Driving</strong>
+                            <span>RD-22 • Dangerous operation</span>
+                        </div>
+                    </button>
+                    <button class="template-card">
+                        <i class="fa-solid fa-wine-bottle" style="color:green;"></i>
+                        <div class="template-info">
+                            <strong>DUI / DWI</strong>
+                            <span>DUI-44 • Driving Under Influence</span>
+                        </div>
+                    </button>
+                    <button class="template-card">
+                        <i class="fa-solid fa-person-running" style="color:brown;"></i>
+                        <div class="template-info">
+                            <strong>Hit & Run</strong>
+                            <span>HR-09 • Fleeing suspect</span>
+                        </div>
+                    </button>
+                    <button class="template-card">
+                        <i class="fa-solid fa-car-crash" style="color:red;"></i>
+                        <div class="template-info">
+                            <strong>Multi-Vehicle Pileup</strong>
+                            <span>MVC-08 • 3+ vehicles</span>
+                        </div>
+                    </button>
+                    <button class="template-card">
+                        <i class="fa-solid fa-skull-crossbones" style="color:black;"></i>
+                        <div class="template-info">
+                            <strong>Reckless Imprudence Resulting in Homicide</strong>
+                            <span>RIRH-01 • Fatal negligence</span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+            <div class="panel">
+                <h3>Recently Generated Reports</h3>
+                <small>Last 7 days • Click to open</small>
+                <div class="recent-reports" id="reportList">
+                    <!-- 1. Minor Traffic Accident -->
+                    <div class="report-row completed">
+                        <i class="fa-solid fa-car-burst" style="color:blue;"></i>
+                        <div class="report-details">
+                            <strong>Minor Traffic Accident</strong>
+                            <p>Officer Cruz • Nov 26, 2025 • EDSA Northbound</p>
+                        </div>
+                        <span class="status">Completed</span>
+                    </div>
+
+                    <!-- 2. Reckless Driving -->
+                    <div class="report-row pending">
+                        <i class="fa-solid fa-gauge-high" style="color:#f97316;"></i>
+                        <div class="report-details">
+                            <strong>Reckless Driving</strong>
+                            <p>Officer Reyes • Nov 26, 2025 • Commonwealth Ave</p>
+                        </div>
+                        <span class="status">Pending Review</span>
+                    </div>
+
+                    <!-- 3. Hit and Run -->
+                    <div class="report-row review">
+                        <i class="fa-solid fa-person-running" style="color:brown;"></i>
+                        <div class="report-details">
+                            <strong>Hit & Run</strong>
+                            <p>Officer Scarlet • Nov 25, 2025 • Rosewood Highway</p>
+                        </div>
+                        <span class="status">Needs Review</span>
+                    </div>
+
+                    <!-- 4. DUI / DWI -->
+                    <div class="report-row completed">
+                        <i class="fa-solid fa-wine-bottle" style="color:green;"></i>
+                        <div class="report-details">
+                            <strong>DUI / DWI</strong>
+                            <p>Officer Mendoza • Nov 24, 2025 • Quezon Ave Checkpoint</p>
+                        </div>
+                        <span class="status">Completed</span>
+                    </div>
+
+                    <!-- 5. Multi-Vehicle Pileup -->
+                    <div class="report-row review">
+                        <i class="fa-solid fa-car-crash" style="color:red;"></i>
+                        <div class="report-details">
+                            <strong>Multi-Vehicle Pileup</strong>
+                            <p>Officer Lim • Nov 23, 2025 • NLEX Balintawak</p>
+                        </div>
+                        <span class="status">Needs Review</span>
+                    </div>
+
+                    <!-- 6. Reckless Imprudence Resulting in Homicide -->
+                    <div class="report-row pending">
+                        <i class="fa-solid fa-skull-crossbones" style="color:black;"></i>
+                        <div class="report-details">
+                            <strong>Reckless Imprudence Resulting in Homicide</strong>
+                            <p>Officer Santos • Nov 22, 2025 • C5 Ortigas Flyover</p>
+                        </div>
+                        <span class="status">Pending Review</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div id="reportModal1" class="modal-overlay">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2><i class="fa-solid fa-file-circle-plus"></i> New Accident Report</h2>
+                    <button class="close-btn" onclick="closeReportModal()">×</button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="form-grid">
+                        <!-- Officer -->
+                        <div class="form-group">
+                            <label><i class="fa-solid fa-user-shield"></i> Reporting Officer</label>
+                            <input type="text" id="officerName" value="Officer Manhattan" readonly>
+                        </div>
+
+                        <!--  Date & Time -->
+                        <div class="form-group">
+                            <label><i class="fa-solid fa-calendar-check"></i> Date & Time</label>
+                            <input type="text" id="reportDateTime" readonly>
+                        </div>
+
+                        <!-- Location -->
+                        <div class="form-group">
+                            <label><i class="fa-solid fa-location-dot"></i> Accident Location</label>
+                            <input type="text" id="location" placeholder="e.g. EDSA near SM North, Quezon City" required>
+                        </div>
+
+                        <!-- Accident Type -->
+                        <div class="form-group">
+                            <label><i class="fa-solid fa-triangle-exclamation"></i> Type of Accident</label>
+                            <select id="accidentType" required>
+                                <option value="" disabled selected>Select accident type</option>
+                                <option value="Minor Traffic Accident"> Minor Traffic Accident – Property damage only</option>
+                                <option value="Reckless Driving"> Reckless Driving – Dangerous operation</option>
+                                <option value="DUI / DWI"> DUI / DWI – Impaired driver</option>
+                                <option value="Hit & Run"> Hit & Run – Fleeing suspect</option>
+                                <option value="Multi-Vehicle Pileup"> Multi-Vehicle Pileup – 3+ vehicles</option>
+                                <option value="Reckless Imprudence Resulting in Homicide"> Reckless Imprudence Resulting in Homicide – Fatal</option>
+                            </select>
+                        </div>
+
+                        <!-- Video Upload -->
+                        <div class="form-group full-width">
+                            <label><i class="fa-solid fa-video"></i> Upload Video Evidence (Optional)</label>
+                            <div class="video-upload-area" id="videoDropArea">
+                                <i class="fa-solid fa-cloud-arrow-up fa-3x"></i>
+                                <p>Drag & drop video file here or <span class="browse-link">browse</span></p>
+                                <input type="file" id="videoUpload" accept="video/*" hidden>
+                            </div>
+                            <div id="videoPreview" class="video-preview"></div>
+                        </div>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button class="cancel-btn" onclick="closeReportModal()">Cancel</button>
+                        <button class="submit-btn" onclick="addReport()">
+                            <i class="fa-solid fa-paper-plane"></i> Submit Report
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- REPORT DETAIL MODAL -->
+        <div id="detailModal" class="modal-overlay">
+            <div class="modal-content" style="max-width:800px;">
+                <div class="modal-header" style="background:#1e293b;">
+                    <h2><i class="fa-solid fa-file-lines"></i> Report Details</h2>
+                    <button class="close-btn" onclick="closeReportDetailModal()">×</button>
+                </div>
+                <div class="modal-body" id="detailContent" style="padding:32px;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main profiles">
+        <div class="profile-banner">
+            <div class="profile-left">
+                <div class="avatar-wrapper">
+                    <img src="{{ url_for('static', filename='images/icon.png') }}" alt="Officer Photo" class="profile-photo"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="profile-avatar-fallback">AD</div>
+                </div>
+                <div class="profile-info">
+                    <h3>Police Officer • Police Headquarters</h3>
+                    <div class="profile-details">
+                        <div class="detail-item">
+                            <i class="fa-solid fa-location-dot"></i>
+                            <div>
+                                <strong>San Pedro, Laguna</strong><br>
+                                <span style="color:#777;font-size:13px;">San Pedro Precinct HQ</span>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fa-solid fa-briefcase-clock"></i>
+                            <div>
+                                <strong>Years of Service</strong><br>
+                                <span style="color:#777;font-size:13px;">Since September 1, 2010</span>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fa-solid fa-envelope"></i>
+                            <div>
+                                <strong>manhattancafe@gmail.com</strong><br>
+                                <span style="color:#777;font-size:13px;">Official Email</span>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fa-solid fa-phone"></i>
+                            <div>
+                                <strong>(212) 555-0198</strong><br>
+                                <span style="color:#777;font-size:13px;">Direct Line</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="profile-right">
+                <div class="profile-actions">
+                    <button class="btn btn-edit">Edit Profile</button>
+                    <button class="btn btn-outline">Change PIN</button>
+                    <button class="btn btn-outline">Save as PDF</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <i class="fa-solid fa-briefcase stat-icon" style="color: var(--primary);"></i>
+                <div class="stat-number">847</div>
+                <div class="stat-label">Total Cases</div>
+            </div>
+            <div class="stat-card">
+                <i class="fa-solid fa-check-circle stat-icon" style="color: var(--success);"></i>
+                <div class="stat-number">234</div>
+                <div class="stat-label">Approved Cases</div>
+            </div>
+            <div class="stat-card">
+                <i class="fa-solid fa-trophy stat-icon" style="color: var(--warning);"></i>
+                <div class="stat-number">15</div>
+                <div class="stat-label">Achievements</div>
+            </div>
+            <div class="stat-card">
+                <i class="fa-solid fa-chart-line stat-icon" style="color: var(--primary);"></i>
+                <div class="stat-number">98.5%</div>
+                <div class="stat-label">Performance</div>
+            </div>
+            <div class="stat-card">
+                <i class="fa-solid fa-star stat-icon" style="color: #f1c40f;"></i>
+                <div class="stat-number">4.9</div>
+                <div class="stat-label">Rating</div>
+            </div>
+        </div>
+
+        <!-- TABS -->
+        <div class="tabs">
+            <button class="tab-button active" data-tab="personal">Personal Info</button>
+            <button class="tab-button" data-tab="employment">Employment</button>
+            <button class="tab-button" data-tab="documents">Documents</button>
+        </div>
+
+     
+        <div id="personal" class="tab-content active">
+            <div class="personal-info-container">
+                <!-- BASIC INFORMATION -->
+                <div class="info-box">
+                    <div class="box-header">
+                        <i class="fa-solid fa-user"></i>
+                        <h3>Basic Information</h3>
+                    </div>
+                    <div class="box-content">
+                        <div class="field-row">
+                            <div class="field">
+                                <label>Full Name</label>
+                                <input type="text" value="Manhattan Cafe" readonly>
+                            </div>
+                            <div class="field">
+                                <label>Preferred Name</label>
+                                <input type="text" value="Manhattan" readonly>
+                            </div>
+                        </div>
+                        <div class="field-row">
+                            <div class="field">
+                                <label>Date of Birth</label>
+                                <input type="text" value="03/5/1998" readonly>
+                            </div>
+                            <div class="field">
+                                <label>Gender</label>
+                                <input type="text" value="Female" readonly>
+                            </div>
+                        </div>
+                        <div class="field-row">
+                            <div class="field">
+                                <label>Nationality</label>
+                                <input type="text" value="Japan" readonly>
+                            </div>
+                            <div class="field">
+                                <label>Blood Type</label>
+                                <input type="text" value="O+" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- IDENTIFICATION -->
+                <div class="info-box">
+                    <div class="box-header">
+                        <i class="fa-solid fa-id-card"></i>
+                        <h3>Identification</h3>
+                    </div>
+                    <div class="box-content">
+                        <div class="field full">
+                            <label>Employee ID</label>
+                            <input type="text" value="ADM-2018-001" readonly>
+                        </div>
+                        <div class="field-row">
+                            <div class="field">
+                                <label>Badge Number</label>
+                                <input type="text" value="#1030" readonly>
+                            </div>
+                            <div class="field">
+                                <label>Social Security Number</label>
+                                <input type="text" value="***-**-1234" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CONTACT INFORMATION -->
+                <div class="info-box">
+                    <div class="box-header">
+                        <i class="fa-solid fa-phone"></i>
+                        <h3>Contact Information</h3>
+                    </div>
+                    <div class="box-content">
+                        <div class="field full">
+                            <label>Primary Email</label>
+                            <div class="input-with-badge">
+                                <input type="email" value="manhattancafe@gmail.com" readonly>
+                                <span class="verified">Verified</span>
+                            </div>
+                        </div>
+                        <div class="field full">
+                            <label>Secondary Email</label>
+                            <input type="email" value="cafe.manhattan1030n@gmail.com" readonly>
+                        </div>
+                        <div class="field-row">
+                            <div class="field">
+                                <label>Work Phone</label>
+                                <input type="tel" value="+63 (990) 195-2394" readonly>
+                            </div>
+                            <div class="field">
+                                <label>Mobile Phone</label>
+                                <input type="tel" value="+63 (901) 185-2175" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- EMERGENCY CONTACTS -->
+                <div class="info-box">
+                    <div class="box-header">
+                        <i class="fa-solid fa-user-shield"></i>
+                        <h3>Emergency Contacts</h3>
+                    </div>
+                    <div class="box-content">
+                        <div class="field full">
+                            <label>Primary Contact</label>
+                            <input type="text" value="Agnes Tachyon (Friend)" readonly>
+                        </div>
+                        <div class="field full">
+                            <label>Phone</label>
+                            <input type="tel" value="+63 (917) 218-4155" readonly>
+                        </div>
+                        <div class="field full">
+                            <label>Relationship</label>
+                            <input type="text" value="Friend" readonly>
+                        </div>
+                        <div class="field full">
+                            <label>Secondary Contact</label>
+                            <input type="text" value="Sunday Silence (Sister)" readonly>
+                        </div>
+                        <div class="field full">
+                            <label>Phone</label>
+                            <input type="tel" value="+63 (915) 465-1215" readonly>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button class="btn btn-cancel">Cancel</button>
+                <button class="btn btn-save">Save Changes</button>
+            </div>
+        </div>
+
+  
+        <div id="employment" class="tab-content">
+            <div class="employment-container">
+                <!-- CURRENT POSITION -->
+                <section class="employment-section">
+                    <div class="section-header">
+                        <i class="fa-solid fa-briefcase"></i>
+                        <h3>Current Position</h3>
+                    </div>
+                    <div class="current-position-grid">
+                        <div class="field"><label>Job Title</label><div class="value">Senior Police Officer</div></div>
+                        <div class="field"><label>Department</label><div class="value highlight">Administration</div></div>
+                        <div class="field"><label>Employment Type</label><div class="value">Full Time</div></div>
+                        <div class="field"><label>Start Date</label><div class="value">09/01/2010</div></div>
+                        <div class="field"><label>Reporting Manager</label><div class="value">Chief Police Officer Mejiro</div></div>
+                        <div class="field"><label>Work Location</label><div class="value highlight">Main Headquarters (San Pedro Laguna)</div></div>
+                    </div>
+                </section>
+
+                <!-- EMPLOYMENT HISTORY -->
+                <section class="employment-section">
+                    <div class="section-header">
+                        <i class="fa-solid fa-history"></i>
+                        <h3>Employment History</h3>
+                    </div>
+                    <div class="history-list">
+                        <div class="history-item current">
+                            <div class="role-info">
+                                <h4>Senior Police Officer</h4>
+                                <p>Officer</p>
+                                <p class="tenure">October 2017 – Present • <strong>8 years</strong></p>
+                            </div>
+                            <div class="current-badge">Current</div>
+                        </div>
+                        <div class="history-item">
+                            <div class="role-info">
+                                <h4>Police Officer</h4>
+                                <p>Operations</p>
+                                <p class="tenure">December 2011 – October 2017 • <strong>6 years</strong></p>
+                            </div>
+                        </div>
+                        <div class="history-item">
+                            <div class="role-info">
+                                <h4>New Recruit</h4>
+                                <p>Human Resources</p>
+                                <p class="tenure">September 2010 – September 2011 • <strong>1 year</strong></p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <div id="documents" class="tab-content">
+            <div class="documents-header">
+                <h2><i class="fa-solid fa-folder-open"></i> Personal Documents</h2>
+                <button class="btn-upload">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Upload Document
+                </button>
+            </div>
+
+            <div class="documents-grid">
+                <div class="doc-card">
+                    <div class="doc-icon"><i class="fa-solid fa-file-pdf"></i></div>
+                    <div class="doc-info">
+                        <h4>Resume_2024.pdf</h4>
+                        <p>2.4 MB • Nov 20, 2024</p>
+                    </div>
+                    <div class="doc-actions">
+                        <button class="btn-view"><i class="fa-solid fa-eye"></i> View</button>
+                        <button class="btn-download"><i class="fa-solid fa-download"></i></button>
+                    </div>
+                </div>
+                <div class="doc-card">
+                    <div class="doc-icon"><i class="fa-solid fa-file-pdf"></i></div>
+                    <div class="doc-info">
+                        <h4>ID_Document.pdf</h4>
+                        <p>1.2 MB • Jan 15, 2024</p>
+                    </div>
+                    <div class="doc-actions">
+                        <button class="btn-view"><i class="fa-solid fa-eye"></i> View</button>
+                        <button class="btn-download"><i class="fa-solid fa-download"></i></button>
+                    </div>
+                </div>
+                <div class="doc-card">
+                    <div class="doc-icon"><i class="fa-solid fa-file-pdf"></i></div>
+                    <div class="doc-info">
+                        <h4>Certifications.pdf</h4>
+                        <p>3.8 MB • Oct 5, 2024</p>
+                    </div>
+                    <div class="doc-actions">
+                        <button class="btn-view"><i class="fa-solid fa-eye"></i> View</button>
+                        <button class="btn-download"><i class="fa-solid fa-download"></i></button>
+                    </div>
+                </div>
+                <div class="doc-card">
+                    <div class="doc-icon"><i class="fa-solid fa-file-pdf"></i></div>
+                    <div class="doc-info">
+                        <h4>Background.pdf</h4>
+                        <p>890 KB • Jan 10, 2024</p>
+                    </div>
+                    <div class="doc-actions">
+                        <button class="btn-view"><i class="fa-solid fa-eye"></i> View</button>
+                        <button class="btn-download"><i class="fa-solid fa-download"></i></button>
+                    </div>
+                </div>
+                <div class="doc-card">
+                    <div class="doc-icon"><i class="fa-solid fa-file-pdf"></i></div>
+                    <div class="doc-info">
+                        <h4>Medical_Records.pdf</h4>
+                        <p>1.5 MB • Mar 12, 2024</p>
+                    </div>
+                    <div class="doc-actions">
+                        <button class="btn-view"><i class="fa-solid fa-eye"></i> View</button>
+                        <button class="btn-download"><i class="fa-solid fa-download"></i></button>
+                    </div>
+                </div>
+                <div class="doc-card">
+                    <div class="doc-icon"><i class="fa-solid fa-file-pdf"></i></div>
+                    <div class="doc-info">
+                        <h4>Contract_2024.pdf</h4>
+                        <p>650 KB • Jan 15, 2024</p>
+                    </div>
+                    <div class="doc-actions">
+                        <button class="btn-view"><i class="fa-solid fa-eye"></i> View</button>
+                        <button class="btn-download"><i class="fa-solid fa-download"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="main notifications">
+        <section class="notifications-container">
+            <div class="notifications-header">
+                <h1>My Report Submissions</h1>
+                <p>Track the status of reports you've submitted for admin review</p>
+            </div>
+
+            <div class="notifications-list" id="reportNotifications">
+                <!-- JS  -->
+            </div>
+        </section>
+        <div class="modal-overlay" id="notificationModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-icon-large" id="modalIcon"></div>
+                    <div>
+                        <h2 id="modalTitle">Report Details</h2>
+                        <p id="modalStatus" class="modal-status-text"></p>
+                    </div>
+                    <button class="modal-close" id="closeModal1" onclick="closeNotificationModal()">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="detail-grid" id="modalDetails">
+                        <!-- JS  -->
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn-secondary" id="closeBtn" onclick="closeNotificationModal()">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+</body>
+</html>
