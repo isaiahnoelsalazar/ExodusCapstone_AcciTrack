@@ -34,6 +34,11 @@ notification_columns = [
 
 @app.route('/')
 def home():
+    return "Home"
+
+
+@app.route('/client')
+def client():
     return render_template(
         "index.html"
     )
