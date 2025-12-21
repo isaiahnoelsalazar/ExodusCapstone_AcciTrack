@@ -11,8 +11,28 @@ class EasyHTTPRequest {
     }
 }
 
+function checkSession(){
+    try {
+        let requestSession = new XMLHttpRequest();
+        requestSession.open("GET", "/session", true);
+        requestSession.onreadystatechange = function (){
+            if (requestSession.status == 200 && requestSession.readyState == 4){
+                let response = requestSession.responseText;
+                if (response == "Not logged in."){
+                    window.location.href = "login";
+                } else {
+                }
+            }
+        }
+        requestSession.send();
+    } catch (e){
+    }
+}
+
+checkSession();
+
 const hour = new Date().getHours();
-document.getElementById("greeting").textContent = `${hour < 12 ? "Good Morning" : hour < 18 ? "Good Afternoon" : "Good Evening"}, Officer Manhattan!`;
+document.getElementById("greeting").textContent = `${hour < 12 ? "Good Morning" : hour < 18 ? "Good Afternoon" : "Good Evening"}`;
 
 function updateClock() {
     const now = new Date().toLocaleString("en-PH", { timeZone: "Asia/Manila" });
@@ -45,6 +65,10 @@ const accidentTypes = [
 ];
 
 let currentVideoURL = "";
+let reportsToday = 0;
+let reportsYesterday = 0;
+let yesterday = new Date();
+yesterday.setDate(yesterday.getDate() - 1);
 
 tabClick(0);
 refreshTasks();
@@ -246,7 +270,16 @@ function refreshReports(){
                     newRow.onclick = () => openReportDetailModal(newRow.dataset);
 
                     document.getElementById("reportList").insertBefore(newRow, document.getElementById("reportList").firstChild);
+
+                    if (new Date(datetime).toLocaleString('en-PH', {dateStyle: 'medium'}) == new Date().toLocaleString('en-PH', {dateStyle: 'medium'})){
+                        reportsToday += 1;
+                    }
+                    if (new Date(datetime).toLocaleString('en-PH', {dateStyle: 'medium'}) == yesterday.toLocaleString('en-PH', {dateStyle: 'medium'})){
+                        reportsYesterday += 1;
+                    }
                 }
+                document.getElementById("reportsTodayh3").innerHTML = reportsToday;
+                document.getElementById("reportsComparedFromYesterday").innerHTML = `+${(reportsToday - reportsYesterday)} from yesterday`;
                 executed = true;
             }
         });

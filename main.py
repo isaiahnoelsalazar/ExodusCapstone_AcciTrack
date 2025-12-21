@@ -1,9 +1,46 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session
 from easy_sql import EasySQL
 import os
+import datetime
+
+separator_string = "[sprtr_str]"
 
 app = Flask(__name__)
+app.config["SECRET_KEY"] = "ExodusCapstone_AcciTrack"
+app.config["SESSION_COOKIE_SECURE"] = True
+app.config["SESSION_COOKIE_SAMESITE"] = "None"
 db = EasySQL()
+officer_columns = [
+    {"officer_first_name": "text"},
+    {"officer_middle_name": "text"},
+    {"officer_last_name": "text"},
+    {"officer_preferred_name": "text"},
+    {"officer_birthday": "text"},
+    {"officer_gender": "text"},
+    {"officer_nationality": "text"},
+    {"officer_blood_type": "text"},
+    {"officer_employee_id": "text"},
+    {"officer_badge_number": "text"},
+    {"officer_social_security_number": "text"},
+    {"officer_primary_email": "text"},
+    {"officer_secondary_email": "text"},
+    {"officer_work_phone": "text"},
+    {"officer_mobile_phone": "text"},
+    {"officer_primary_contact_name": "text"},
+    {"officer_primary_contact_phone_number": "text"},
+    {"officer_primary_contact_relationship": "text"},
+    {"officer_secondary_contact_name": "text"},
+    {"officer_secondary_contact_phone_number": "text"},
+    {"officer_secondary_contact_relationship": "text"},
+    {"officer_employment_job_title": "text"},
+    {"officer_employment_department": "text"},
+    {"officer_employment_type": "text"},
+    {"officer_employment_start_date": "text"},
+    {"officer_employment_reporting_officer": "text"},
+    {"officer_employment_work_location": "text"},
+    {"officer_employment_history": "text"},
+    {"officer_document_list": "text"}
+]
 task_columns = [
     {"task_title": "text"},
     {"task_description": "text"},
@@ -32,6 +69,23 @@ notification_columns = [
 ]
 
 
+@app.before_request
+def make_session_permanent():
+    session.modified = True
+    app.permanent_session_lifetime = datetime.timedelta(days=7)
+
+
+@app.route("/session", methods=["GET"])
+def check_session():
+    try:
+        if session.get("logged_in", "no") != "no":
+            return session.get("logged_in", "no") + separator_string + session.get("badge_number", "-1")
+        else:
+            return "Not logged in."
+    except:
+        return "Fail"
+
+
 @app.route('/')
 def home():
     return "Home"
@@ -39,9 +93,105 @@ def home():
 
 @app.route('/client')
 def client():
+    officer_data = ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]
+    for officer in db.getTableValues("AcciTrack", "AcciTrack_OfficerList"):
+        if officer[9] == session["badge_number"]:
+            officer_data = officer
     return render_template(
-        "client.html"
+        "client.html",
+        officer_first_name=officer_data[0],
+        officer_middle_name=officer_data[1],
+        officer_last_name=officer_data[2],
+        officer_preferred_name=officer_data[3],
+        officer_birthday=officer_data[4],
+        officer_gender=officer_data[5],
+        officer_nationality=officer_data[6],
+        officer_blood_type=officer_data[7],
+        officer_employee_id=officer_data[8],
+        officer_badge_number=officer_data[9],
+        officer_social_security_number=officer_data[10],
+        officer_primary_email=officer_data[11],
+        officer_secondary_email=officer_data[12],
+        officer_work_phone=officer_data[13],
+        officer_mobile_phone=officer_data[14],
+        officer_primary_contact_name=officer_data[15],
+        officer_primary_contact_phone_number=officer_data[16],
+        officer_primary_contact_relationship=officer_data[17],
+        officer_secondary_contact_name=officer_data[18],
+        officer_secondary_contact_phone_number=officer_data[19],
+        officer_secondary_contact_relationship=officer_data[20],
+        officer_employment_job_title=officer_data[21],
+        officer_employment_department=officer_data[22],
+        officer_employment_type=officer_data[23],
+        officer_employment_start_date=officer_data[24],
+        officer_employment_reporting_officer=officer_data[25],
+        officer_employment_work_location=officer_data[26],
+        officer_employment_history=officer_data[27],
+        officer_document_list=officer_data[28]
     )
+
+
+@app.route('/login')
+def login():
+    return "Login"
+
+
+@app.route('/test-login')
+def test_login():
+    session["logged_in"] = "yes"
+    session["badge_number"] = "1"
+    return "[TEST LOGIN] Please proceed to \"/client\""
+
+
+@app.route('/test-logout')
+def test_logout():
+    session["logged_in"] = "no"
+    session["badge_number"] = "-1"
+    return "[TEST LOGOUT] Please proceed to \"/client\""
+
+
+@app.route('/signin')
+def signin():
+    return "Signin"
+
+
+# @app.route('/add-officer', methods=["POST"])
+def add_officer():
+    try:
+        values = [
+            {"officer_first_name": "Manhattan"},
+            {"officer_middle_name": ""},
+            {"officer_last_name": "Cafe"},
+            {"officer_preferred_name": "Manhattan"},
+            {"officer_birthday": "03/5/1998"},
+            {"officer_gender": "Female"},
+            {"officer_nationality": "Japan"},
+            {"officer_blood_type": "O+"},
+            {"officer_employee_id": "ADM-2018-001"},
+            {"officer_badge_number": "1"},
+            {"officer_social_security_number": "012-34-5678"},
+            {"officer_primary_email": "manhattancafe@gmail.com"},
+            {"officer_secondary_email": "cafe.manhattan1030n@gmail.com"},
+            {"officer_work_phone": "+63 990 195-2394"},
+            {"officer_mobile_phone": "+63 901 185-2175"},
+            {"officer_primary_contact_name": "Agnes Tachyon"},
+            {"officer_primary_contact_phone_number": "+63 917 218-4155"},
+            {"officer_primary_contact_relationship": "Friend"},
+            {"officer_secondary_contact_name": "Sunday Silence"},
+            {"officer_secondary_contact_phone_number": "+63 915 465-1215"},
+            {"officer_secondary_contact_relationship": "Sister"},
+            {"officer_employment_job_title": "Senior Police Officer"},
+            {"officer_employment_department": "Administration"},
+            {"officer_employment_type": "Full Time"},
+            {"officer_employment_start_date": "09/01/2010"},
+            {"officer_employment_reporting_officer": "Chief Police Officer Mejiro"},
+            {"officer_employment_work_location": "Main Headquarters (San Pedro Laguna)"},
+            {"officer_employment_history": ""},
+            {"officer_document_list": ""}
+        ]
+        db.insertToTable("AcciTrack", "AcciTrack_OfficerList", values)
+    except Exception as e:
+        print("Fail: " + str(e))
 
 
 @app.route('/add-task', methods=["POST"])
@@ -134,7 +284,9 @@ def get_notifications():
 
 if "__main__" == __name__:
     if not os.path.exists("AcciTrack.db"):
+        db.createTable("AcciTrack", "AcciTrack_OfficerList", officer_columns)
         db.createTable("AcciTrack", "AcciTrack_TaskList", task_columns)
         db.createTable("AcciTrack", "AcciTrack_ReportList", report_columns)
         db.createTable("AcciTrack", "AcciTrack_NotificationList", notification_columns)
+        add_officer()
     app.run(debug=True)

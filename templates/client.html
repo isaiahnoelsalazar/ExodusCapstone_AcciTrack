@@ -40,13 +40,13 @@
             </button>
         </nav>
         <div class="officer-card">
-            <p>Officer Manhattan</p>
-            <small>Badge #1030</small>
+            <p>Officer {{ officer_preferred_name }}</p>
+            <small>Badge #{{ officer_badge_number }}</small>
         </div>
     </aside>
     <header class="top-header">
         <div class="header-left">
-            <h2 id="greeting">Good Evening, Officer Manhattan!</h2>
+            <h2><span id="greeting">Good Evening</span>, Officer {{ officer_preferred_name }}!</h2>
             <p id="datetime">Loading...</p>
             <input type="text" placeholder="Search incidents, cases, officers..." class="search"/>
         </div>
@@ -57,7 +57,7 @@
             </div>
             <div class="profile profile-text">
                 <div class="profile-info">
-                    <strong>Officer Manhattan</strong>
+                    <strong>Officer {{ officer_preferred_name }}</strong>
                     <small>On Duty</small>
                 </div>
                 <i class="fa-solid fa-chevron-down"></i>
@@ -71,9 +71,9 @@
                     <i class="fa-solid fa-circle-exclamation"></i>
                 </div>
                 <div>
-                    <h3>24</h3>
+                    <h3 id="reportsTodayh3">0</h3>
                     <p>Recent Incidents</p>
-                    <small>+3 from yesterday</small>
+                    <small id="reportsComparedFromYesterday">+0 from yesterday</small>
                 </div>
             </div>
             <div class="card stat green">
@@ -81,9 +81,9 @@
                     <i class="fa-solid fa-circle-check"></i>
                 </div>
                 <div>
-                    <h3>18</h3>
+                    <h3>0</h3>
                     <p>Resolved Today</p>
-                    <small>+12% from yesterday</small>
+                    <small>+0% from yesterday</small>
                 </div>
             </div>
             <div class="card stat yellow">
@@ -91,7 +91,7 @@
                     <i class="fa-solid fa-user"></i>
                 </div>
                 <div>
-                    <h3>47</h3>
+                    <h3>0</h3>
                     <p>Personnel on Duty</p>
                     <small>Real-time update</small>
                 </div>
@@ -101,9 +101,9 @@
                     <i class="fa-solid fa-chart-line"></i>
                 </div>
                 <div>
-                    <h3>8.5m</h3>
+                    <h3>0.0m</h3>
                     <p>Avg Response Time</p>
-                    <small>Improved 15%</small>
+                    <small>Improved 0%</small>
                 </div>
             </div>
         </section>
@@ -585,20 +585,20 @@
                             <i class="fa-solid fa-briefcase-clock"></i>
                             <div>
                                 <strong>Years of Service</strong><br>
-                                <span style="color:#777;font-size:13px;">Since September 1, 2010</span>
+                                <span style="color:#777;font-size:13px;">Since {{ officer_employment_start_date }}</span>
                             </div>
                         </div>
                         <div class="detail-item">
                             <i class="fa-solid fa-envelope"></i>
                             <div>
-                                <strong>manhattancafe@gmail.com</strong><br>
+                                <strong>{{ officer_primary_email }}</strong><br>
                                 <span style="color:#777;font-size:13px;">Official Email</span>
                             </div>
                         </div>
                         <div class="detail-item">
                             <i class="fa-solid fa-phone"></i>
                             <div>
-                                <strong>(212) 555-0198</strong><br>
+                                <strong>{{ officer_work_phone }}</strong><br>
                                 <span style="color:#777;font-size:13px;">Direct Line</span>
                             </div>
                         </div>
@@ -662,31 +662,31 @@
                         <div class="field-row">
                             <div class="field">
                                 <label>Full Name</label>
-                                <input type="text" value="Manhattan Cafe" readonly>
+                                <input type="text" value="{{ officer_first_name }} {{ officer_middle_name }} {{ officer_last_name }}" readonly>
                             </div>
                             <div class="field">
                                 <label>Preferred Name</label>
-                                <input type="text" value="Manhattan" readonly>
+                                <input type="text" value="{{ officer_preferred_name }}" readonly>
                             </div>
                         </div>
                         <div class="field-row">
                             <div class="field">
                                 <label>Date of Birth</label>
-                                <input type="text" value="03/5/1998" readonly>
+                                <input type="text" value="{{ officer_birthday }}" readonly>
                             </div>
                             <div class="field">
                                 <label>Gender</label>
-                                <input type="text" value="Female" readonly>
+                                <input type="text" value="{{ officer_gender }}" readonly>
                             </div>
                         </div>
                         <div class="field-row">
                             <div class="field">
                                 <label>Nationality</label>
-                                <input type="text" value="Japan" readonly>
+                                <input type="text" value="{{ officer_nationality }}" readonly>
                             </div>
                             <div class="field">
                                 <label>Blood Type</label>
-                                <input type="text" value="O+" readonly>
+                                <input type="text" value="{{ officer_blood_type }}" readonly>
                             </div>
                         </div>
                     </div>
@@ -701,16 +701,16 @@
                     <div class="box-content">
                         <div class="field full">
                             <label>Employee ID</label>
-                            <input type="text" value="ADM-2018-001" readonly>
+                            <input type="text" value="{{ officer_employee_id }}" readonly>
                         </div>
                         <div class="field-row">
                             <div class="field">
                                 <label>Badge Number</label>
-                                <input type="text" value="#1030" readonly>
+                                <input type="text" value="#{{ officer_badge_number }}" readonly>
                             </div>
                             <div class="field">
                                 <label>Social Security Number</label>
-                                <input type="text" value="***-**-1234" readonly>
+                                <input type="text" value="{{ officer_social_security_number }}" readonly>
                             </div>
                         </div>
                     </div>
@@ -726,22 +726,22 @@
                         <div class="field full">
                             <label>Primary Email</label>
                             <div class="input-with-badge">
-                                <input type="email" value="manhattancafe@gmail.com" readonly>
+                                <input type="email" value="{{ officer_primary_email }}" readonly>
                                 <span class="verified">Verified</span>
                             </div>
                         </div>
                         <div class="field full">
                             <label>Secondary Email</label>
-                            <input type="email" value="cafe.manhattan1030n@gmail.com" readonly>
+                            <input type="email" value="{{ officer_secondary_email }}" readonly>
                         </div>
                         <div class="field-row">
                             <div class="field">
                                 <label>Work Phone</label>
-                                <input type="tel" value="+63 (990) 195-2394" readonly>
+                                <input type="tel" value="{{ officer_work_phone }}" readonly>
                             </div>
                             <div class="field">
                                 <label>Mobile Phone</label>
-                                <input type="tel" value="+63 (901) 185-2175" readonly>
+                                <input type="tel" value="{{ officer_mobile_phone }}" readonly>
                             </div>
                         </div>
                     </div>
@@ -756,23 +756,23 @@
                     <div class="box-content">
                         <div class="field full">
                             <label>Primary Contact</label>
-                            <input type="text" value="Agnes Tachyon (Friend)" readonly>
+                            <input type="text" value="{{ officer_primary_contact_name }} ({{ officer_primary_contact_relationship }})" readonly>
                         </div>
                         <div class="field full">
                             <label>Phone</label>
-                            <input type="tel" value="+63 (917) 218-4155" readonly>
+                            <input type="tel" value="{{ officer_primary_contact_phone_number }}" readonly>
                         </div>
                         <div class="field full">
                             <label>Relationship</label>
-                            <input type="text" value="Friend" readonly>
+                            <input type="text" value="{{ officer_primary_contact_relationship }}" readonly>
                         </div>
                         <div class="field full">
                             <label>Secondary Contact</label>
-                            <input type="text" value="Sunday Silence (Sister)" readonly>
+                            <input type="text" value="{{ officer_secondary_contact_name }} ({{ officer_secondary_contact_relationship }})" readonly>
                         </div>
                         <div class="field full">
                             <label>Phone</label>
-                            <input type="tel" value="+63 (915) 465-1215" readonly>
+                            <input type="tel" value="{{ officer_secondary_contact_phone_number }}" readonly>
                         </div>
                     </div>
                 </div>
@@ -794,12 +794,12 @@
                         <h3>Current Position</h3>
                     </div>
                     <div class="current-position-grid">
-                        <div class="field"><label>Job Title</label><div class="value">Senior Police Officer</div></div>
-                        <div class="field"><label>Department</label><div class="value highlight">Administration</div></div>
-                        <div class="field"><label>Employment Type</label><div class="value">Full Time</div></div>
-                        <div class="field"><label>Start Date</label><div class="value">09/01/2010</div></div>
-                        <div class="field"><label>Reporting Manager</label><div class="value">Chief Police Officer Mejiro</div></div>
-                        <div class="field"><label>Work Location</label><div class="value highlight">Main Headquarters (San Pedro Laguna)</div></div>
+                        <div class="field"><label>Job Title</label><div class="value">{{ officer_employment_job_title }}</div></div>
+                        <div class="field"><label>Department</label><div class="value highlight">{{ officer_employment_department }}</div></div>
+                        <div class="field"><label>Employment Type</label><div class="value">{{ officer_employment_type }}</div></div>
+                        <div class="field"><label>Start Date</label><div class="value">{{ officer_employment_start_date }}</div></div>
+                        <div class="field"><label>Reporting Manager</label><div class="value">{{ officer_employment_reporting_officer }}</div></div>
+                        <div class="field"><label>Work Location</label><div class="value highlight">{{ officer_employment_work_location }}</div></div>
                     </div>
                 </section>
 
@@ -953,7 +953,6 @@
             </div>
         </div>
     </div>
-
     <script src="{{ url_for('static', filename='js/index.js') }}"></script>
 </body>
 </html>
