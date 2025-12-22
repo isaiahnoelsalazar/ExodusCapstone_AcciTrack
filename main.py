@@ -39,12 +39,15 @@ officer_columns = [
     {"officer_employment_reporting_officer": "text"},
     {"officer_employment_work_location": "text"},
     {"officer_employment_history": "text"},
-    {"officer_document_list": "text"}
+    {"officer_document_list": "text"},
+    {"officer_pin": "text"},
+    {"officer_username": "text"}
 ]
 task_columns = [
     {"task_title": "text"},
     {"task_description": "text"},
-    {"task_priority": "text"}
+    {"task_priority": "text"},
+    {"task_officer_badge_number": "text"}
 ]
 report_columns = [
     {"report_caseNum": "text"},
@@ -53,7 +56,8 @@ report_columns = [
     {"report_location": "text"},
     {"report_type": "text"},
     {"report_status": "text"},
-    {"report_video": "text"}
+    {"report_video": "text"},
+    {"report_officer_badge_number": "text"}
 ]
 notification_columns = [
     {"notification_caseNum": "text"},
@@ -65,7 +69,8 @@ notification_columns = [
     {"notification_video": "text"},
     {"notification_reviewing_officer": "text"},
     {"notification_reviewing_datetime": "text"},
-    {"notification_reviewing_reason": "text"}
+    {"notification_reviewing_reason": "text"},
+    {"notification_officer_badge_number": "text"}
 ]
 
 
@@ -133,10 +138,40 @@ def client():
 
 @app.route('/login')
 def login():
-    return "Login"
+    return render_template("login.html")
 
 
-@app.route('/test-login')
+@app.route('/log-in')
+def log_in():
+    try:
+        username = request.args.get("username")
+        badge_number = request.args.get("badgeNumber")
+        officer_pin = request.args.get("officerPin")
+        for officer in db.getTableValues("AcciTrack", "AcciTrack_OfficerList"):
+            if officer[9] == badge_number or officer[30] == username:
+                if officer[9] != badge_number:
+                    raise Exception("Incorrect badge number")
+                if officer[30] != username:
+                    raise Exception("Incorrect username")
+                if officer_pin == officer[29]:
+                    session["logged_in"] = "yes"
+                    session["badge_number"] = officer[9]
+                    return "<script>window.location.href=\"client\";</script>"
+                else:
+                    raise Exception("Incorrect password")
+        return "<script>alert(\"User does not exist.\");window.location.href=\"login\";</script>"
+    except:
+        return "Fail"
+
+
+@app.route('/logout')
+def logout():
+    session["logged_in"] = "no"
+    session["badge_number"] = "-1"
+    return "<script>window.location.href=\"login\";</script>"
+
+
+'''@app.route('/test-login')
 def test_login():
     session["logged_in"] = "yes"
     session["badge_number"] = "1"
@@ -147,7 +182,7 @@ def test_login():
 def test_logout():
     session["logged_in"] = "no"
     session["badge_number"] = "-1"
-    return "[TEST LOGOUT] Please proceed to \"/client\""
+    return "[TEST LOGOUT] Please proceed to \"/client\""'''
 
 
 @app.route('/signin')
@@ -156,7 +191,7 @@ def signin():
 
 
 # @app.route('/add-officer', methods=["POST"])
-def add_officer():
+def add_officer1():
     try:
         values = [
             {"officer_first_name": "Manhattan"},
@@ -187,7 +222,49 @@ def add_officer():
             {"officer_employment_reporting_officer": "Chief Police Officer Mejiro"},
             {"officer_employment_work_location": "Main Headquarters (San Pedro Laguna)"},
             {"officer_employment_history": ""},
-            {"officer_document_list": ""}
+            {"officer_document_list": ""},
+            {"officer_pin": "1234"},
+            {"officer_username": "cafe1030"}
+        ]
+        db.insertToTable("AcciTrack", "AcciTrack_OfficerList", values)
+    except Exception as e:
+        print("Fail: " + str(e))
+
+
+def add_officer2():
+    try:
+        values = [
+            {"officer_first_name": "Ooga Booga"},
+            {"officer_middle_name": ""},
+            {"officer_last_name": "Awooga"},
+            {"officer_preferred_name": "Goo"},
+            {"officer_birthday": "03/5/1458"},
+            {"officer_gender": "Male"},
+            {"officer_nationality": "Philippines"},
+            {"officer_blood_type": "O+"},
+            {"officer_employee_id": "EID-123"},
+            {"officer_badge_number": "2"},
+            {"officer_social_security_number": "012-34-5679"},
+            {"officer_primary_email": "awooga@gmail.com"},
+            {"officer_secondary_email": "oogabooga@gmail.com"},
+            {"officer_work_phone": "+63 990 195-2395"},
+            {"officer_mobile_phone": "+63 901 185-2176"},
+            {"officer_primary_contact_name": "Agnes Tachyon"},
+            {"officer_primary_contact_phone_number": "+63 917 218-4155"},
+            {"officer_primary_contact_relationship": "Friend"},
+            {"officer_secondary_contact_name": "Sunday Silence"},
+            {"officer_secondary_contact_phone_number": "+63 915 465-1215"},
+            {"officer_secondary_contact_relationship": "Sister"},
+            {"officer_employment_job_title": "Senior Police Officer"},
+            {"officer_employment_department": "Administration"},
+            {"officer_employment_type": "Full Time"},
+            {"officer_employment_start_date": "09/01/2015"},
+            {"officer_employment_reporting_officer": "Chief Police Officer Mejiro"},
+            {"officer_employment_work_location": "Main Headquarters (San Pedro Laguna)"},
+            {"officer_employment_history": ""},
+            {"officer_document_list": ""},
+            {"officer_pin": "4321"},
+            {"officer_username": "oogabooga"}
         ]
         db.insertToTable("AcciTrack", "AcciTrack_OfficerList", values)
     except Exception as e:
@@ -203,7 +280,8 @@ def add_task():
         values = [
             {"task_title": title},
             {"task_description": description},
-            {"task_priority": priority}
+            {"task_priority": priority},
+            {"task_officer_badge_number": session.get("badge_number", "-1")}
         ]
         db.insertToTable("AcciTrack", "AcciTrack_TaskList", values)
         return "Success"
@@ -213,7 +291,11 @@ def add_task():
 
 @app.route('/get-tasks', methods=["POST"])
 def get_tasks():
-    return str(db.getTableValues("AcciTrack", "AcciTrack_TaskList"))
+    temp = []
+    for a in db.getTableValues("AcciTrack", "AcciTrack_TaskList"):
+        if a[3] == session.get("badge_number", "-1"):
+            temp.append(a)
+    return str(temp)
 
 
 @app.route('/add-report', methods=["POST"])
@@ -233,7 +315,8 @@ def add_report():
             {"report_location": location},
             {"report_type": accident_type},
             {"report_status": status},
-            {"report_video": video}
+            {"report_video": video},
+            {"report_officer_badge_number": session.get("badge_number", "-1")}
         ]
         db.insertToTable("AcciTrack", "AcciTrack_ReportList", values)
         return "Success"
@@ -243,7 +326,11 @@ def add_report():
 
 @app.route('/get-reports', methods=["POST"])
 def get_reports():
-    return str(db.getTableValues("AcciTrack", "AcciTrack_ReportList"))
+    temp = []
+    for a in db.getTableValues("AcciTrack", "AcciTrack_ReportList"):
+        if a[3] == session.get("badge_number", "-1"):
+            temp.append(a)
+    return str(temp)
 
 
 @app.route('/add-notification', methods=["POST"])
@@ -269,7 +356,8 @@ def add_notification():
             {"notification_video": video},
             {"notification_reviewing_officer": reviewing_officer},
             {"notification_reviewing_datetime": reviewing_datetime},
-            {"notification_reviewing_reason": reviewing_reason}
+            {"notification_reviewing_reason": reviewing_reason},
+            {"notification_officer_badge_number": session.get("badge_number", "-1")}
         ]
         db.insertToTable("AcciTrack", "AcciTrack_NotificationList", values)
         return "Success"
@@ -279,7 +367,11 @@ def add_notification():
 
 @app.route('/get-notifications', methods=["POST"])
 def get_notifications():
-    return str(db.getTableValues("AcciTrack", "AcciTrack_NotificationList"))
+    temp = []
+    for a in db.getTableValues("AcciTrack", "AcciTrack_NotificationList"):
+        if a[3] == session.get("badge_number", "-1"):
+            temp.append(a)
+    return str(temp)
 
 
 if "__main__" == __name__:
@@ -288,5 +380,6 @@ if "__main__" == __name__:
         db.createTable("AcciTrack", "AcciTrack_TaskList", task_columns)
         db.createTable("AcciTrack", "AcciTrack_ReportList", report_columns)
         db.createTable("AcciTrack", "AcciTrack_NotificationList", notification_columns)
-        add_officer()
+        add_officer1()
+        add_officer2()
     app.run(debug=True)

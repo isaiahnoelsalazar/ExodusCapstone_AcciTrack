@@ -11,6 +11,9 @@ class EasyHTTPRequest {
     }
 }
 
+const separator_string = "[sprtr_str]";
+let badgeNumber = "-1";
+
 function checkSession(){
     try {
         let requestSession = new XMLHttpRequest();
@@ -21,6 +24,7 @@ function checkSession(){
                 if (response == "Not logged in."){
                     window.location.href = "login";
                 } else {
+                    badgeNumber = response.split(separator_string)[1];
                 }
             }
         }
@@ -132,7 +136,7 @@ function refreshTasks(){
                 for (let a = 0; a < split.length; a++){
                     let title = split[a].split(", ")[0].substring(2, split[a].split(", ")[0].length - 1);
                     let desc = split[a].split(", ")[1].substring(1, split[a].split(", ")[1].length - 1);
-                    let priority = split[a].split(", ")[2].substring(1, (a == split.length - 1 ? split[a].split(", ")[2].length - 2 : split[a].split(", ")[2].length - 1));
+                    let priority = split[a].split(", ")[2].substring(1, split[a].split(", ")[2].length - 1);
                     const taskHTML = `
                         <div class="task-item ${priority}" id="task-${a}">
                             <i class="fa-solid fa-circle-dot"></i>
@@ -246,7 +250,7 @@ function refreshReports(){
                     let location = value_split[3].substring(1);
                     let type = value_split[4].substring(1);
                     let status = value_split[5].substring(1);
-                    let video = value_split[6].substring(1, (a == split.length - 1 ? value_split[6].length - 2 : value_split[6].length - 1));
+                    let video = value_split[6].substring(1);
                     const iconInfo = accidentIcons[type] || accidentIcons["Minor Traffic Accident"];
                     const newRow = document.createElement("div");
                     newRow.className = "report-row pending";
@@ -373,7 +377,7 @@ function refreshNotifications(){
                     let video = value_split[6].substring(1);
                     let reviewing_officer = value_split[7].substring(1);
                     let reviewing_datetime = value_split[8].substring(1);
-                    let reviewing_reason = value_split[9].substring(1, (a == split.length - 1 ? value_split[9].length - 2 : value_split[9].length - 1));
+                    let reviewing_reason = value_split[9].substring(1);
 
                     const accident = accidentTypes.find(a => a.type === type) || accidentTypes[0];
 

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AcciTrack • Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+</head>
+<body>
+<style>
+       * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #e2e8f0;
+            height: 100vh;
+            display: grid;
+            place-items: center;
+            padding: 20px;
+            position: relative;
+            background: linear-gradient(rgba(10,14,23,0.88), rgba(10,14,23,0.92)),
+                        url('static/images/title-hero-1.jpg') center/cover no-repeat fixed;
+        }
+</style>
+<div class="card">
+    <div class="logo"><img src="static/images/Logo.png" alt="PNP Logo"></div>
+    <h1>AcciTrack</h1>
+    <p class="sub">Philippine National Police • AcciTrack System</p>
+
+    <!-- <div class="roles">
+        <div class="role active" data-role="officer">
+            <img src="static/images/officer.png" alt="Officer">
+            <h3>Patrol Officer</h3>
+        </div>
+        <div class="role" data-role="admin">
+            <img src="static/images/admin.jpg" alt="Admin">
+            <h3>Administrator</h3>
+        </div>
+    </div> -->
+
+   <!-- Officer Form -->
+    <div id="officer-form">
+        <form id="officerLogin" action="/log-in">
+            <div class="in"><i class="fa-solid fa-user-tie"></i><input type="text" id="username" placeholder="Officer Username" name="username" required></div>
+            <div class="in"><i class="fa-solid fa-id-badge"></i><input type="text" id="badgeNumber" placeholder="Badge Number" name="badgeNumber" required></div>
+            <div class="in"><i class="fa-solid fa-lock"></i><input type="password" id="officerPin" placeholder="4-Digit PIN" name="officerPin" maxlength="4" required></div>
+            <button type="submit" class="btn">Log In</button>
+        </form>
+    </div>
+
+    <!-- Admin Form -->
+    <!-- <div id="admin-form" style="display:none">
+        <form id="adminLogin">
+            <div class="in"><i class="fa-solid fa-user-tie"></i><input type="text" id="adminUsername" placeholder="Admin Username" required></div>
+            <div class="in"><i class="fa-solid fa-id-badge"></i><input type="text" id="badgeNumber" placeholder="Badge Number" required></div>
+            <div class="in"><i class="fa-solid fa-key"></i><input type="password" id="adminPassword" placeholder="Password" required></div>
+            <button type="submit" class="btn">Enter as Administrator</button>
+        </form>
+    </div>
+
+    <div class="signup-link">
+        Don't have an account? <a href="signup.html">Sign up here</a>
+    </div> -->
+
+    <div class="footer">Philippine National Police<br>© 2025 AcciTrack</div>
+</div>
+
+</body>
+</html>
