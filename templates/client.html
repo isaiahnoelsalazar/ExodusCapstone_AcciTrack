@@ -55,7 +55,7 @@
                 <span class="pulse"></span>
                 <small>LIVE</small>
             </div>
-            <div class="profile profile-text">
+            <div class="profile profile-text" onclick="logout()">
                 <div class="profile-info">
                     <strong>Officer {{ officer_preferred_name }}</strong>
                     <small>On Duty</small>
@@ -500,7 +500,7 @@
                         <!-- Officer -->
                         <div class="form-group">
                             <label><i class="fa-solid fa-user-shield"></i> Reporting Officer</label>
-                            <input type="text" id="officerName" value="Officer Manhattan" readonly>
+                            <input type="text" id="officerName" value="Officer {{ officer_preferred_name }}" readonly>
                         </div>
 
                         <!--  Date & Time -->

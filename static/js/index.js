@@ -161,6 +161,10 @@ function refreshTasks(){
     }
 }
 
+function logout(){
+    window.location.href = "logout";
+}
+
 function deleteTask(id){
     // add sql
     document.getElementById("taskList").removeChild(document.getElementById(id));

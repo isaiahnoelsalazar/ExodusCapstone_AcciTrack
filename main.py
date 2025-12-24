@@ -98,9 +98,11 @@ def home():
 
 @app.route('/client')
 def client():
+    if session.get("logged_in", "no") == "no":
+        return "<script>window.location.href=\"login\";</script>"
     officer_data = ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]
     for officer in db.getTableValues("AcciTrack", "AcciTrack_OfficerList"):
-        if officer[9] == session["badge_number"]:
+        if officer[9] == session.get("badge_number", "-1"):
             officer_data = officer
     return render_template(
         "client.html",
@@ -169,20 +171,6 @@ def logout():
     session["logged_in"] = "no"
     session["badge_number"] = "-1"
     return "<script>window.location.href=\"login\";</script>"
-
-
-'''@app.route('/test-login')
-def test_login():
-    session["logged_in"] = "yes"
-    session["badge_number"] = "1"
-    return "[TEST LOGIN] Please proceed to \"/client\""
-
-
-@app.route('/test-logout')
-def test_logout():
-    session["logged_in"] = "no"
-    session["badge_number"] = "-1"
-    return "[TEST LOGOUT] Please proceed to \"/client\""'''
 
 
 @app.route('/signin')
@@ -328,7 +316,7 @@ def add_report():
 def get_reports():
     temp = []
     for a in db.getTableValues("AcciTrack", "AcciTrack_ReportList"):
-        if a[3] == session.get("badge_number", "-1"):
+        if a[7] == session.get("badge_number", "-1"):
             temp.append(a)
     return str(temp)
 
@@ -369,7 +357,7 @@ def add_notification():
 def get_notifications():
     temp = []
     for a in db.getTableValues("AcciTrack", "AcciTrack_NotificationList"):
-        if a[3] == session.get("badge_number", "-1"):
+        if a[10] == session.get("badge_number", "-1"):
             temp.append(a)
     return str(temp)
 
