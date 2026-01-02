@@ -6,7 +6,7 @@
     <title>AcciTrack</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/client.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}"/>
 </head>
 <body>
     <aside class="sidebar">
@@ -14,7 +14,7 @@
             <img src="{{ url_for('static', filename='images/Logo.png') }}" alt="AcciTrack Logo" class="logo-img"/>
             <div class="logo-text">
                 <div class="logo-main">AcciTrack</div>
-                <div class="logo-sub">Command Center</div>
+                <div class="logo-sub">Admin Center</div>
             </div>
         </div>
         <nav class="sidebar-menu">
@@ -40,13 +40,13 @@
             </button>
         </nav>
         <div class="officer-card">
-            <p>Officer {{ officer_preferred_name }}</p>
+            <p>Admin {{ officer_preferred_name }}</p>
             <small>Badge #{{ officer_badge_number }}</small>
         </div>
     </aside>
-    <header class="top-header">
+    <header class="top-header" id="top-header">
         <div class="header-left">
-            <h2><span id="greeting">Good Evening</span>, Officer {{ officer_preferred_name }}!</h2>
+            <h2><span id="greeting">Good Evening</span>, Admin {{ officer_preferred_name }}!</h2>
             <p id="datetime">Loading...</p>
             <input type="text" placeholder="Search incidents, cases, officers..." class="search"/>
         </div>
@@ -57,7 +57,7 @@
             </div>
             <div class="profile profile-text" onclick="logout()">
                 <div class="profile-info">
-                    <strong>Officer {{ officer_preferred_name }}</strong>
+                    <strong>Admin {{ officer_preferred_name }}</strong>
                     <small>On Duty</small>
                 </div>
                 <i class="fa-solid fa-chevron-down"></i>
@@ -113,24 +113,24 @@
                 <small>Frequently used actions</small>
                 <div class="quick-actions-grid">
                     <button type="button" class="qa-btn primary" onclick="tabClick(2)">
-                        <i class="fa-solid fa-plus"></i>
+                        <i class="fa-solid fa-car-burst"></i>
                         <div class="qa-text">
-                            <strong>New Incident</strong>
-                            <span>Report incident</span>
+                            <strong>Review Incidents</strong>
+                            <span>View recent accidents</span>
                         </div>
                     </button>
                     <button type="button" class="qa-btn secondary" onclick="tabClick(2)">
-                        <i class="fa-solid fa-file-lines"></i>
+                        <i class="fa-solid fa-folder-open"></i>
                         <div class="qa-text">
-                            <strong>Create Report</strong>
-                            <span>Generate report</span>
+                            <strong>Manage Reports</strong>
+                            <span>Review, approve & export</span>
                         </div>
                     </button>
-                    <button type="button" class="qa-btn secondary" onclick="tabClick(0)">
-                        <i class="fa-solid fa-clipboard-list"></i>
+                    <button type="button" class="qa-btn secondary" onclick="tabClick(3)">
+                        <i class="fa-solid fa-user-edit"></i>
                         <div class="qa-text">
-                            <strong>Checklist</strong>
-                            <span>Daily Checklist</span>
+                            <strong>Pending Profile Edits</strong>
+                            <span>Review officer account</span>
                         </div>
                     </button>
                     <button type="button" class="qa-btn primary" onclick="tabClick(4)">
@@ -148,47 +148,6 @@
                         <span class="task-count" id="taskCount">0</span>
                     </div>
                     <div class="task-list" id="taskList">
-                        <!-- <div class="task-item high">
-                            <i class="fa-solid fa-circle-dot"></i>
-                            <div class="task-content">
-                                <strong>Review EDSA Collision Footage</strong>
-                                <small>Bodycam #47 • Due in 2 hrs</small>
-                            </div>
-                            <span class="task-badge">URGENT</span>
-                            <button class="delete-task-btn" title="Delete task">
-                                <i class="fa-solid fa-xmark"></i>
-                            </button>
-                        </div>
-                        <div class="task-item medium">
-                            <i class="fa-solid fa-circle-dot"></i>
-                            <div class="task-content">
-                                <strong>Submit Monthly Traffic Report</strong>
-                                <small>Draft ready • 14 pages</small>
-                            </div>
-                            <button class="delete-task-btn" title="Delete task">
-                                <i class="fa-solid fa-xmark"></i>
-                            </button>
-                        </div>
-                        <div class="task-item low">
-                            <i class="fa-solid fa-circle-dot"></i>
-                            <div class="task-content">
-                                <strong>Calibrate Bodycam Units</strong>
-                                <small>12/15 units completed</small>
-                            </div>
-                            <button class="delete-task-btn" title="Delete task">
-                                <i class="fa-solid fa-xmark"></i>
-                            </button>
-                        </div>
-                        <div class="task-item info">
-                            <i class="fa-solid fa-circle-dot"></i>
-                            <div class="task-content">
-                                <strong>Play Zomboid</strong>
-                                <small>Platero Velasco Subdivision • 11:00 PM</small>
-                            </div>
-                            <button class="delete-task-btn" title="Delete task">
-                                <i class="fa-solid fa-xmark"></i>
-                            </button>
-                        </div> -->
                     </div>
                     <button class="add-task-btn" id="openTaskModal" onclick="openTaskModal()">
                         <i class="fa-solid fa-plus"></i>
@@ -215,60 +174,12 @@
                     </div>
                 </div>
             </div>
-            <div class="panel active-cases">
-                <h3>Active Cases</h3>
-                <small>Currently under investigation</small>
-                <div class="case">
-                    <div class="case-header">
-                        <i class="fa-solid fa-file-lines"></i>
-                        <span class="case-id">CASE-2024-089</span>
-                        <span class="badge high">High</span>
-                    </div>
-                    <div class="case-title">Reckless Driving</div>
-                    <div class="case-officer">Officer Urara</div>
-                    <div class="progress-bar">
-                        <div class="progress" style="width:65%"></div>
-                    </div>
-                    <div class="progress-percent">65%</div>
-                </div>
-                <div class="case">
-                    <div class="case-header">
-                        <i class="fa-solid fa-file-lines"></i>
-                        <span class="case-id">CASE-2024-087</span>
-                        <span class="badge medium">Medium</span>
-                    </div>
-                    <div class="case-title">Hit and Run</div>
-                    <div class="case-officer">Officer Scarlet</div>
-                    <div class="progress-bar">
-                        <div class="progress" style="width:40%"></div>
-                    </div>
-                    <div class="progress-percent">40%</div>
-                </div>
-                <div class="case">
-                    <div class="case-header">
-                        <i class="fa-solid fa-file-lines"></i>
-                        <span class="case-id">CASE-2024-085</span>
-                        <span class="badge high">High</span>
-                    </div>
-                    <div class="case-title">DUI Checkpoint Violation</div>
-                    <div class="case-officer">Officer Tachyon</div>
-                    <div class="progress-bar">
-                        <div class="progress" style="width:80%"></div>
-                    </div>
-                    <div class="progress-percent">80%</div>
-                </div>
-                <div class="case">
-                    <div class="case-header">
-                        <i class="fa-solid fa-file-lines"></i>
-                        <span class="case-id">CASE-2024-082</span>
-                        <span class="badge low">Low</span>
-                    </div>
-                    <div class="case-title">Minor Traffic Accident</div>
-                    <div class="case-officer">Officer Goldship</div>
-                    <div class="progress-bar">
-                        <div class="progress" style="width:90%"></div>
-                    </div>
-                    <div class="progress-percent">90%</div>
+            <div class="panel pending-reports">
+                <h3>Notifications</h3>
+                <small>Pending Report Reviews</small>
+                <div id="pending-reports-list"></div>
+                <div id="empty-state" class="empty-state" style="display:none;">
+                    <i class="fa-solid fa-check-circle"></i><p>All reports are up to date!</p>
                 </div>
             </div>
         </section>
@@ -307,6 +218,12 @@
     </div>
 
     <div class="main incidents">
+        <header class="incidents-top-header">
+            <div class="header-left">
+                <h2>Incidents Command Center</h2>
+                <p>All submitted bodycam/dashcam footage • Admin Review Panel</p>
+            </div>
+        </header>
         <div class="incident-grid">
             <div class="video-card">
                 <video controls poster="assets/images/thumbnail.jpg">
@@ -367,64 +284,29 @@
     </div>
 
     <div class="main reports">
+        <header class="reports-top-header" style="margin-bottom:0;">
+            <div class="header-left">
+                <h2 style="font-size:28px; font-weight:700; color:#0f172a; margin:0;">Reports Awaiting Review</h2>
+                <p style="color:#64748b; margin:8px 0 0; font-size:15px;">Review and approve or deny submitted reports</p>
+            </div>
+        </header>
         <section class="content-grid" style="grid-template-columns: 1fr 1fr 1fr; gap: 32px;">
             <div class="panel">
-                <div class="section-title-bar">
-                    <h3>Quick Accident Report Templates</h3>
-                    <button class="new-report-btn-inline" onclick="openReportModal()">
-                        <i class="fa-solid fa-plus"></i> New Report
-                    </button>
+                <div style="display:flex; align-items:center; gap:16px; margin:32px 0; flex-wrap:wrap;">
+                    <div style="position:relative; flex:1; max-width:460px;">
+                        <i class="fa-solid fa-magnifying-glass" style="position:absolute; left:16px; top:50%; transform:translateY(-50%); color:#94a3b8;"></i>
+                        <input type="text" placeholder="Search reports..." style="width:100%; padding:14px 16px 14px 48px; border-radius:12px; border:1px solid #e2e8f0; background:white; font-size:15px;">
+                    </div>
+                    <select id="reportTypeFilter" style="padding:12px 20px; border-radius:12px; border:1px solid #e2e8f0; background:white; color:#475569; font-weight:500; min-width:220px; cursor:pointer;">
+                        <option value="all">All Types</option>
+                        <option value="minor">Minor Traffic Accident</option>
+                        <option value="reckless">Reckless Driving</option>
+                        <option value="dui">DUI / DWI</option>
+                        <option value="hitrun">Hit and Run</option>
+                        <option value="multipile">Multi-Vehicle Pile Up</option>
+                        <option value="homicide">Reckless Imprudence Resulting in Homicide</option>
+                    </select>
                 </div>
-                <small>Select incident type to begin</small>
-
-                <div class="templates-grid" style="grid-template-columns: 1fr 1fr 1fr; gap: 18px; margin-top: 20px;">
-                    <button class="template-card">
-                        <i class="fa-solid fa-car-burst" style="color:blue;"></i>
-                        <div class="template-info">
-                            <strong>Minor Traffic Accident</strong>
-                            <span>TCR-01 • Property damage only</span>
-                        </div>
-                    </button>
-                    <button class="template-card">
-                        <i class="fa-solid fa-gauge-high" style="color:#f97316;"></i>
-                        <div class="template-info">
-                            <strong>Reckless Driving</strong>
-                            <span>RD-22 • Dangerous operation</span>
-                        </div>
-                    </button>
-                    <button class="template-card">
-                        <i class="fa-solid fa-wine-bottle" style="color:green;"></i>
-                        <div class="template-info">
-                            <strong>DUI / DWI</strong>
-                            <span>DUI-44 • Driving Under Influence</span>
-                        </div>
-                    </button>
-                    <button class="template-card">
-                        <i class="fa-solid fa-person-running" style="color:brown;"></i>
-                        <div class="template-info">
-                            <strong>Hit & Run</strong>
-                            <span>HR-09 • Fleeing suspect</span>
-                        </div>
-                    </button>
-                    <button class="template-card">
-                        <i class="fa-solid fa-car-crash" style="color:red;"></i>
-                        <div class="template-info">
-                            <strong>Multi-Vehicle Pileup</strong>
-                            <span>MVC-08 • 3+ vehicles</span>
-                        </div>
-                    </button>
-                    <button class="template-card">
-                        <i class="fa-solid fa-skull-crossbones" style="color:black;"></i>
-                        <div class="template-info">
-                            <strong>Reckless Imprudence Resulting in Homicide</strong>
-                            <span>RIRH-01 • Fatal negligence</span>
-                        </div>
-                    </button>
-                </div>
-            </div>
-            <div class="panel">
-                <h3>Recently Generated Reports</h3>
-                <small>Last 7 days • Click to open</small>
                 <div class="recent-reports" id="reportList">
                 </div>
             </div>
@@ -492,13 +374,137 @@
             </div>
         </div>
         <!-- REPORT DETAIL MODAL -->
-        <div id="detailModal" class="modal-overlay">
-            <div class="modal-content" style="max-width:800px;">
-                <div class="modal-header" style="background:#1e293b;">
-                    <h2><i class="fa-solid fa-file-lines"></i> Report Details</h2>
-                    <button class="close-btn" onclick="closeReportDetailModal()">×</button>
+<!--        <div id="detailModal" class="modal-overlay">-->
+<!--            <div class="modal-content" style="max-width:800px;">-->
+<!--                <div class="modal-header" style="background:#1e293b;">-->
+<!--                    <h2><i class="fa-solid fa-file-lines"></i> Report Details</h2>-->
+<!--                    <button class="close-btn" onclick="closeReportDetailModal()">×</button>-->
+<!--                </div>-->
+<!--                <div class="modal-body" id="detailContent" style="padding:32px;">-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+        <div class="modal-overlay" id="detailModal">
+            <div class="modal report-detail-modal">
+                <div class="modal-header" id="detailModel-header" style="display:flex; justify-content:space-between; align-items:center; padding:20px 24px; background:#f8fafc; border-bottom:1px solid #e2e8f0; position:relative;">
                 </div>
-                <div class="modal-body" id="detailContent" style="padding:32px;">
+                <div class="modal-body">
+                    <div class="video-section">
+                        <h3>Video Evidence</h3>
+                        <video id="detailModal-evidenceVideo" controls controlsList="nodownload" style="width:100%; max-height:500px; border-radius:12px; background:black;">
+                        </video>
+                    </div>
+                    <div class="info-grid" id="detailModal-info-grid">
+                    </div>
+<!--                    <div class="summary-section">-->
+<!--                        <h3>Summary</h3>-->
+<!--                        <p id="modalSummary"></p>-->
+<!--                    </div>-->
+<!--                    <div class="witness-section">-->
+<!--                        <h3>Witnesses</h3>-->
+<!--                        <p>Robert Wilson (witness) – 555-0123, observed the accident from nearby coffee shop</p>-->
+<!--                    </div>-->
+<!--                    <div class="evidence-list">-->
+<!--                        <h3>Evidence Collected</h3>-->
+<!--                        <ul>-->
+<!--                            <li><span class="check">Check</span> Photos of vehicle damage</li>-->
+<!--                            <li><span class="check">Check</span> Dashcam footage</li>-->
+<!--                            <li><span class="check">Check</span> Traffic light timing records</li>-->
+<!--                        </ul>-->
+<!--                    </div>-->
+                    <div class="modal-action-bar">
+                        <div class="left-actions">
+                            <button class="btn-secondary-action" onclick="saveAsPDF()"><i class="fa-solid fa-download"></i> Save as PDF</button>
+                            <button class="btn-secondary-action" onclick="printReport()"><i class="fa-solid fa-print"></i> Print</button>
+                            <button class="btn-secondary-action" onclick="forwardReport()"><i class="fa-solid fa-share"></i> Forward</button>
+                        </div>
+                        <div class="right-actions">
+                            <button id="btn-req" class="btn-request-changes" onclick="openRequestChanges()">Request Changes</button>
+                            <button id="btn-deny" class="btn-deny" onclick="openDenyModal()">Deny</button>
+                            <button id="btn-approve" class="btn-approve" onclick="openApproveModal()">Approve</button>
+                            <button id="btn-resubmit" class="btn-resubmit" onclick="officerResubmitted()" style="display:none; background:#6366f1; color:white; padding:12px 24px; border-radius:8px; font-weight:600; border:none; cursor:pointer;">
+                                Officer Resubmitted
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- APPROVE MODAL -->
+        <div class="modal-overlay" id="approveModal" style="display:none;">
+            <div class="modal confirmation-modal">
+                <div class="modal-header"><h3>Approve Report</h3><button type="button" onclick="closeApproveModal()" style="position:absolute; top:16px; right:24px; all:unset; cursor:pointer; font-size:32px; color:#64748b; width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; transition:0.2s;"
+                            onmouseover="this.style.background='#e2e8f0'; this.style.color='#1e293b'"
+                            onmouseout="this.style.background='transparent'; this.style.color='#64748b'">
+                        ×
+                    </button></div>
+                <div class="modal-body">
+                    <p>Report <strong id="approveId"></strong> – <span id="approveTitle"></span></p>
+                    <div class="info-row"><span>Officer</span><span id="approveOfficer"></span></div>
+                    <div class="info-row"><span>Submitted</span><span id="approveDate"></span></div>
+                    <div class="info-row"><span>Report Type</span><span id="approveType"></span></div>
+                    <div class="info-row"><span>Incident Date</span><span id="approveIncidentDate"></span></div>
+                    <label>Review Notes</label>
+                    <textarea id="approveNote" placeholder="Review note is REQUIRED for approval..."></textarea>
+                    <div class="success-box"><span>Check</span> This report will be marked as approved and the officer will be notified. The report will be archived and can be saved as PDF for records.</div>
+                    <div class="modal-footer">
+                        <button class="btn-cancel" onclick="closeAllModals()">Cancel</button>
+                        <button class="btn-save-pdf"><i class="fa-solid fa-download"></i> Save as PDF</button>
+                        <button class="btn-approve-final" onclick="finalApprove()">Approve Report</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DENY MODAL -->
+        <div class="modal-overlay" id="denyModal" style="display:none;">
+            <div class="modal confirmation-modal">
+                <div class="modal-header"><h3>Deny Report</h3><button type="button" onclick="closeDenyModal()" style="position:absolute; top:16px; right:24px; all:unset; cursor:pointer; font-size:32px; color:#64748b; width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; transition:0.2s;"
+                            onmouseover="this.style.background='#e2e8f0'; this.style.color='#1e293b'"
+                            onmouseout="this.style.background='transparent'; this.style.color='#64748b'">
+                        ×
+                    </button></div>
+                <div class="modal-body">
+                    <p>Report <strong id="denyId"></strong> – <span id="denyTitle"></span></p>
+                    <div class="info-row"><span>Officer</span><span id="denyOfficer"></span></div>
+                    <div class="info-row"><span>Submitted</span><span id="denyDate"></span></div>
+                    <div class="info-row"><span>Report Type</span><span id="denyType"></span></div>
+                    <div class="info-row"><span>Incident Date</span><span id="denyIncidentDate"></span></div>
+                    <label>Review Notes (Required)</label>
+                    <textarea id="denyNote" placeholder="Explain why this report is being denied and what needs to be corrected..."></textarea>
+                    <div class="danger-box"><span>Warning</span> This report will be returned to the officer with your notes. The officer will need to make corrections and resubmit.</div>
+                    <div class="modal-footer">
+                        <button class="btn-cancel" onclick="closeAllModals()">Cancel</button>
+                        <button class="btn-save-pdf"><i class="fa-solid fa-download"></i> Save as PDF</button>
+                        <button class="btn-deny-final" onclick="finalDeny()">Deny Report</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- REQUEST CHANGES MODAL -->
+        <div class="modal-overlay" id="requestChangesModal" style="display:none;">
+            <div class="modal confirmation-modal">
+                <div class="modal-header"><h3>Request Changes</h3><button type="button" onclick="closeReqModal()" style="position:absolute; top:16px; right:24px; all:unset; cursor:pointer; font-size:32px; color:#64748b; width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; transition:0.2s;"
+                            onmouseover="this.style.background='#e2e8f0'; this.style.color='#1e293b'"
+                            onmouseout="this.style.background='transparent'; this.style.color='#64748b'">
+                        ×
+                    </button></div>
+                <div class="modal-body">
+                    <p>Report <strong id="reqId"></strong> – <span id="reqTitle"></span></p>
+                    <div class="info-row"><span>Officer</span><span id="reqOfficer"></span></div>
+                    <div class="info-row"><span>Submitted</span><span id="reqDate"></span></div>
+                    <div class="info-row"><span>Report Type</span><span id="reqType"></span></div>
+                    <div class="info-row"><span>Incident Date</span><span id="reqIncidentDate"></span></div>
+                    <label>Review Notes (Required)</label>
+                    <textarea id="reqNote" placeholder="Specify what changes are needed and why..."></textarea>
+                    <div class="info-box"><span>i</span> The officer will receive your feedback and can make revisions before resubmitting.</div>
+                    <div class="modal-footer">
+                        <button class="btn-cancel" onclick="closeAllModals()">Cancel</button>
+                        <button class="btn-save-pdf"><i class="fa-solid fa-download"></i> Save as PDF</button>
+                        <button class="btn-request-final" onclick="finalRequestChanges()">Send Feedback</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -869,31 +875,71 @@
                 <!-- JS  -->
             </div>
         </section>
+
         <div class="modal-overlay" id="notificationModal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <div class="modal-icon-large" id="modalIcon"></div>
-                    <div>
-                        <h2 id="modalTitle">Report Details</h2>
-                        <p id="modalStatus" class="modal-status-text"></p>
-                    </div>
-                    <button class="modal-close" id="closeModal1" onclick="closeNotificationModal()">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
+            <div class="modal" style="max-width:900px;width:95%;background:white;border-radius:24px;overflow:hidden;">
+                <div class="modal-header" style="align-content: center;display: flex;background:#0b2c66;justify-content: space-between;color:white;padding:28px 40px;position:relative;width: 100%">
+                    <h3 style="font-size:26px;font-weight:800;">Incident Report Details</h3>
+                    <button type="button" onclick="closeNotificationModal()" style="position:absolute; right:24px; all:unset; cursor:pointer; font-size:32px; color:#64748b; width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; transition:0.2s;"
+                            onmouseover="this.style.background='#e2e8f0'; this.style.color='#1e293b'"
+                            onmouseout="this.style.background='transparent'; this.style.color='#64748b'">×</button>
                 </div>
-
-                <div class="modal-body">
-                    <div class="detail-grid" id="modalDetails">
-                        <!-- JS  -->
+                <div class="modal-body" style="padding:40px;">
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;">
+                        <div>
+                            <h4 style="margin:0 0 16px;font-size:20px;color:#1e293b;">Video Evidence</h4>
+                            <video id="notificationModal-incidentVideo" controls controlsList="nodownload" style="width:100%;border-radius:16px;background:black;">
+                                <source src="" type="video/mp4">
+                            </video>
+                        </div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+                            <div style="background:#f8fafc;padding:24px;border-radius:20px;">
+                                <strong style="color:#64748b;font-size:15px;display:block;margin-bottom:8px;">Officer</strong>
+                                <p id="notificationModal-modalOfficer" style="font-size:18px;font-weight:700;color:#0f172a;margin:0;">-</p>
+                            </div>
+                            <div style="background:#f8fafc;padding:24px;border-radius:20px;">
+                                <strong style="color:#64748b;font-size:15px;display:block;margin-bottom:8px;">Location</strong>
+                                <p id="notificationModal-modalLocation" style="font-size:18px;font-weight:700;color:#0f172a;margin:0;">-</p>
+                            </div>
+                            <div style="background:#f8fafc;padding:24px;border-radius:20px;">
+                                <strong style="color:#64748b;font-size:15px;display:block;margin-bottom:8px;">Type of Accident</strong>
+                                <p id="notificationModal-modalType" style="font-size:18px;font-weight:700;color:#0f172a;margin:0;">-</p>
+                            </div>
+                            <div style="background:#f8fafc;padding:24px;border-radius:20px;">
+                                <strong style="color:#64748b;font-size:15px;display:block;margin-bottom:8px;">Date & Time</strong>
+                                <p id="notificationModal-modalDateTime" style="font-size:18px;font-weight:700;color:#0f172a;margin:0;">-</p>
+                            </div>
+                        </div>
                     </div>
-                </div>
-
-                <div class="modal-footer">
-                    <button class="btn-secondary" id="closeBtn" onclick="closeNotificationModal()">Close</button>
                 </div>
             </div>
         </div>
+
+<!--        <div class="modal-overlay" id="notificationModal">-->
+<!--            <div class="modal-content">-->
+<!--                <div class="modal-header">-->
+<!--                    <div class="modal-icon-large" id="modalIcon"></div>-->
+<!--                    <div>-->
+<!--                        <h2 id="modalTitle">Report Details</h2>-->
+<!--                        <p id="modalStatus" class="modal-status-text"></p>-->
+<!--                    </div>-->
+<!--                    <button class="modal-close" id="closeModal1" onclick="closeNotificationModal()">-->
+<!--                        <i class="fa-solid fa-xmark"></i>-->
+<!--                    </button>-->
+<!--                </div>-->
+
+<!--                <div class="modal-body">-->
+<!--                    <div class="detail-grid" id="modalDetails">-->
+<!--                        &lt;!&ndash; JS  &ndash;&gt;-->
+<!--                    </div>-->
+<!--                </div>-->
+
+<!--                <div class="modal-footer">-->
+<!--                    <button class="btn-secondary" id="closeBtn" onclick="closeNotificationModal()">Close</button>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
     </div>
-    <script src="{{ url_for('static', filename='js/client.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
 </body>
 </html>

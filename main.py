@@ -41,7 +41,8 @@ officer_columns = [
     {"officer_employment_history": "text"},
     {"officer_document_list": "text"},
     {"officer_pin": "text"},
-    {"officer_username": "text"}
+    {"officer_username": "text"},
+    {"officer_is_admin": "text"}
 ]
 task_columns = [
     {"task_title": "text"},
@@ -138,6 +139,49 @@ def client():
     )
 
 
+@app.route('/admin')
+def admin():
+    if session.get("logged_in", "no") == "no":
+        return "<script>window.location.href=\"login\";</script>"
+    officer_data = ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
+                    "", "", "", ""]
+    for officer in db.getTableValues("AcciTrack", "AcciTrack_OfficerList"):
+        if officer[9] == session.get("badge_number", "-1"):
+            officer_data = officer
+    return render_template(
+        "admin.html",
+        officer_first_name=officer_data[0],
+        officer_middle_name=officer_data[1],
+        officer_last_name=officer_data[2],
+        officer_preferred_name=officer_data[3],
+        officer_birthday=officer_data[4],
+        officer_gender=officer_data[5],
+        officer_nationality=officer_data[6],
+        officer_blood_type=officer_data[7],
+        officer_employee_id=officer_data[8],
+        officer_badge_number=officer_data[9],
+        officer_social_security_number=officer_data[10],
+        officer_primary_email=officer_data[11],
+        officer_secondary_email=officer_data[12],
+        officer_work_phone=officer_data[13],
+        officer_mobile_phone=officer_data[14],
+        officer_primary_contact_name=officer_data[15],
+        officer_primary_contact_phone_number=officer_data[16],
+        officer_primary_contact_relationship=officer_data[17],
+        officer_secondary_contact_name=officer_data[18],
+        officer_secondary_contact_phone_number=officer_data[19],
+        officer_secondary_contact_relationship=officer_data[20],
+        officer_employment_job_title=officer_data[21],
+        officer_employment_department=officer_data[22],
+        officer_employment_type=officer_data[23],
+        officer_employment_start_date=officer_data[24],
+        officer_employment_reporting_officer=officer_data[25],
+        officer_employment_work_location=officer_data[26],
+        officer_employment_history=officer_data[27],
+        officer_document_list=officer_data[28]
+    )
+
+
 @app.route('/login')
 def login():
     return render_template("login.html")
@@ -158,7 +202,10 @@ def log_in():
                 if officer_pin == officer[29]:
                     session["logged_in"] = "yes"
                     session["badge_number"] = officer[9]
-                    return "<script>window.location.href=\"client\";</script>"
+                    if officer[31] == "yes":
+                        return "<script>window.location.href=\"admin\";</script>"
+                    else:
+                        return "<script>window.location.href=\"client\";</script>"
                 else:
                     raise Exception("Incorrect password")
         return "<script>alert(\"User does not exist.\");window.location.href=\"login\";</script>"
@@ -212,7 +259,8 @@ def add_officer1():
             {"officer_employment_history": ""},
             {"officer_document_list": ""},
             {"officer_pin": "1234"},
-            {"officer_username": "cafe1030"}
+            {"officer_username": "cafe1030"},
+            {"officer_is_admin": "no"}
         ]
         db.insertToTable("AcciTrack", "AcciTrack_OfficerList", values)
     except Exception as e:
@@ -252,7 +300,8 @@ def add_officer2():
             {"officer_employment_history": ""},
             {"officer_document_list": ""},
             {"officer_pin": "4321"},
-            {"officer_username": "oogabooga"}
+            {"officer_username": "oogabooga"},
+            {"officer_is_admin": "yes"}
         ]
         db.insertToTable("AcciTrack", "AcciTrack_OfficerList", values)
     except Exception as e:
@@ -284,6 +333,11 @@ def get_tasks():
         if a[3] == session.get("badge_number", "-1"):
             temp.append(a)
     return str(temp)
+
+
+@app.route('/admin-get-tasks', methods=["POST"])
+def admin_get_tasks():
+    return str(db.getTableValues("AcciTrack", "AcciTrack_TaskList"))
 
 
 @app.route('/add-report', methods=["POST"])
@@ -319,6 +373,11 @@ def get_reports():
         if a[7] == session.get("badge_number", "-1"):
             temp.append(a)
     return str(temp)
+
+
+@app.route('/admin-get-reports', methods=["POST"])
+def admin_get_reports():
+    return str(db.getTableValues("AcciTrack", "AcciTrack_ReportList"))
 
 
 @app.route('/add-notification', methods=["POST"])
@@ -360,6 +419,11 @@ def get_notifications():
         if a[10] == session.get("badge_number", "-1"):
             temp.append(a)
     return str(temp)
+
+
+@app.route('/admin-get-notifications', methods=["POST"])
+def admin_get_notifications():
+    return str(db.getTableValues("AcciTrack", "AcciTrack_NotificationList"))
 
 
 if "__main__" == __name__:
