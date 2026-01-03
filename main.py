@@ -52,26 +52,18 @@ task_columns = [
 ]
 report_columns = [
     {"report_caseNum": "text"},
-    {"report_officer": "text"},
-    {"report_datetime": "text"},
+    {"report_submitting_officer": "text"},
+    {"report_submitting_datetime": "text"},
     {"report_location": "text"},
     {"report_type": "text"},
     {"report_status": "text"},
     {"report_video": "text"},
-    {"report_officer_badge_number": "text"}
-]
-notification_columns = [
-    {"notification_caseNum": "text"},
-    {"notification_submitting_officer": "text"},
-    {"notification_submitting_datetime": "text"},
-    {"notification_location": "text"},
-    {"notification_type": "text"},
-    {"notification_status": "text"},
-    {"notification_video": "text"},
-    {"notification_reviewing_officer": "text"},
-    {"notification_reviewing_datetime": "text"},
-    {"notification_reviewing_reason": "text"},
-    {"notification_officer_badge_number": "text"}
+    {"report_reviewing_officer": "text"},
+    {"report_reviewing_datetime": "text"},
+    {"report_reviewing_reason": "text"},
+    {"report_is_read": "text"},
+    {"report_officer_badge_number": "text"},
+    {"report_real_submission_datetime": "text"}
 ]
 
 
@@ -335,30 +327,31 @@ def get_tasks():
     return str(temp)
 
 
-@app.route('/admin-get-tasks', methods=["POST"])
-def admin_get_tasks():
-    return str(db.getTableValues("AcciTrack", "AcciTrack_TaskList"))
-
-
 @app.route('/add-report', methods=["POST"])
 def add_report():
     try:
         case_num = request.args.get("caseNum")
         officer = request.args.get("officer")
         datetime = request.args.get("datetime")
+        realdatetime = request.args.get("realdatetime")
         location = request.args.get("location")
         accident_type = request.args.get("type")
         status = request.args.get("status")
         video = request.args.get("video")
         values = [
             {"report_caseNum": case_num},
-            {"report_officer": officer},
-            {"report_datetime": datetime},
+            {"report_submitting_officer": officer},
+            {"report_submitting_datetime": datetime},
             {"report_location": location},
             {"report_type": accident_type},
             {"report_status": status},
             {"report_video": video},
-            {"report_officer_badge_number": session.get("badge_number", "-1")}
+            {"report_reviewing_officer": "none"},
+            {"report_reviewing_datetime": "none"},
+            {"report_reviewing_reason": "none"},
+            {"report_is_read": "no"},
+            {"report_officer_badge_number": session.get("badge_number", "-1")},
+            {"report_real_submission_datetime": realdatetime}
         ]
         db.insertToTable("AcciTrack", "AcciTrack_ReportList", values)
         return "Success"
@@ -370,7 +363,7 @@ def add_report():
 def get_reports():
     temp = []
     for a in db.getTableValues("AcciTrack", "AcciTrack_ReportList"):
-        if a[7] == session.get("badge_number", "-1"):
+        if a[11] == session.get("badge_number", "-1"):
             temp.append(a)
     return str(temp)
 
@@ -380,58 +373,11 @@ def admin_get_reports():
     return str(db.getTableValues("AcciTrack", "AcciTrack_ReportList"))
 
 
-@app.route('/add-notification', methods=["POST"])
-def add_notification():
-    try:
-        case_num = request.args.get("caseNum")
-        submitting_officer = request.args.get("submitting_officer")
-        submitting_datetime = request.args.get("submitting_datetime")
-        location = request.args.get("location")
-        accident_type = request.args.get("type")
-        status = request.args.get("status")
-        video = request.args.get("video")
-        reviewing_officer = request.args.get("reviewing_officer")
-        reviewing_datetime = request.args.get("reviewing_datetime")
-        reviewing_reason = request.args.get("reason")
-        values = [
-            {"notification_caseNum": case_num},
-            {"notification_submitting_officer": submitting_officer},
-            {"notification_submitting_datetime": submitting_datetime},
-            {"notification_location": location},
-            {"notification_type": accident_type},
-            {"notification_status": status},
-            {"notification_video": video},
-            {"notification_reviewing_officer": reviewing_officer},
-            {"notification_reviewing_datetime": reviewing_datetime},
-            {"notification_reviewing_reason": reviewing_reason},
-            {"notification_officer_badge_number": session.get("badge_number", "-1")}
-        ]
-        db.insertToTable("AcciTrack", "AcciTrack_NotificationList", values)
-        return "Success"
-    except:
-        return "Fail"
-
-
-@app.route('/get-notifications', methods=["POST"])
-def get_notifications():
-    temp = []
-    for a in db.getTableValues("AcciTrack", "AcciTrack_NotificationList"):
-        if a[10] == session.get("badge_number", "-1"):
-            temp.append(a)
-    return str(temp)
-
-
-@app.route('/admin-get-notifications', methods=["POST"])
-def admin_get_notifications():
-    return str(db.getTableValues("AcciTrack", "AcciTrack_NotificationList"))
-
-
 if "__main__" == __name__:
     if not os.path.exists("AcciTrack.db"):
         db.createTable("AcciTrack", "AcciTrack_OfficerList", officer_columns)
         db.createTable("AcciTrack", "AcciTrack_TaskList", task_columns)
         db.createTable("AcciTrack", "AcciTrack_ReportList", report_columns)
-        db.createTable("AcciTrack", "AcciTrack_NotificationList", notification_columns)
         add_officer1()
         add_officer2()
     app.run(debug=True)

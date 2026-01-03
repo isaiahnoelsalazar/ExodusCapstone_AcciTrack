@@ -77,7 +77,6 @@ yesterday.setDate(yesterday.getDate() - 1);
 tabClick(0);
 refreshTasks();
 refreshReports();
-refreshNotifications();
 
 function tabClick(index){
     let sections = document.getElementsByClassName('main');
@@ -132,7 +131,7 @@ function addTask(){
 function refreshTasks(){
     try {
         let executed = false;
-        let request = new EasyHTTPRequest("/admin-get-tasks", "POST");
+        let request = new EasyHTTPRequest("/get-tasks", "POST");
         request.execute(() => {
             if (!executed){
                 let split = request.request.response.substring(1, request.request.response.length - 1).split("), ");
@@ -242,6 +241,18 @@ function addReport(){
     }
 }
 
+function getTimeDifference(start, end) {
+    let diff = Math.abs(end - start);
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    diff -= days * (1000 * 60 * 60 * 24);
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    diff -= hours * (1000 * 60 * 60);
+    const mins = Math.floor(diff / (1000 * 60));
+    diff -= mins * (1000 * 60);
+    const seconds = Math.floor(diff / 1000);
+    return `${days}d ${hours}h ${mins}m ${seconds}s`;
+}
+
 function refreshReports(){
     try {
         let executed = false;
@@ -254,12 +265,17 @@ function refreshReports(){
                 for (let a = 0; a < split.length; a++){
                     let value_split = split[a].split("', ");
                     let case_num = value_split[0].substring(2);
-                    let officer = value_split[1].substring(1);
-                    let datetime = value_split[2].substring(1);
+                    let submitting_officer = value_split[1].substring(1);
+                    let submitting_datetime = value_split[2].substring(1);
                     let location = value_split[3].substring(1);
                     let type = value_split[4].substring(1);
                     let status = value_split[5].substring(1);
                     let video = value_split[6].substring(1);
+                    let reviewing_officer = value_split[7].substring(1);
+                    let reviewing_datetime = value_split[8].substring(1);
+                    let reviewing_reason = value_split[9].substring(1);
+                    let realdatetime = value_split[12].substring(1, a == split.length - 1 ? value_split[12].length - 2 : value_split[12].length - 1);
+
                     const iconInfo = accidentIcons[type] || accidentIcons["Minor Traffic Accident"];
                     const newRow = document.createElement("div");
                     newRow.className = "report-row pending";
@@ -268,28 +284,72 @@ function refreshReports(){
                         <i class="fa-solid ${iconInfo.icon}" style="color:${iconInfo.color};"></i>
                         <div class="report-details">
                             <strong>${type}</strong>
-                            <p>${officer} • ${datetime} • ${location}</p>
+                            <p>${submitting_officer} • ${submitting_datetime} • ${location}</p>
                         </div>
                         <span class="status" style="background:#fef3c7;color:#92400e;">PENDING REVIEW</span>
                     `;
-                    newRow.dataset.type = type;
-                    newRow.dataset.officer = officer;
-                    newRow.dataset.datetime = datetime;
-                    newRow.dataset.location = location;
                     newRow.dataset.casenumber = case_num;
-                    newRow.dataset.video = video;
+                    newRow.dataset.submitting_officer = submitting_officer;
+                    newRow.dataset.submitting_datetime = submitting_datetime;
+                    newRow.dataset.location = location;
+                    newRow.dataset.type = type;
                     newRow.dataset.status = status;
+                    newRow.dataset.video = video;
+                    newRow.dataset.reviewing_officer = reviewing_officer;
+                    newRow.dataset.reviewing_datetime = reviewing_datetime;
+                    newRow.dataset.reviewing_reason = reviewing_reason;
+                    newRow.dataset.realdatetime = realdatetime;
 
                     newRow.onclick = () => openReportDetailModal(newRow.dataset);
 
                     document.getElementById("reportList").insertBefore(newRow, document.getElementById("reportList").firstChild);
 
-                    if (new Date(datetime).toLocaleString('en-PH', {dateStyle: 'medium'}) == new Date().toLocaleString('en-PH', {dateStyle: 'medium'})){
+                    if (new Date(submitting_datetime).toLocaleString('en-PH', {dateStyle: 'medium'}) == new Date().toLocaleString('en-PH', {dateStyle: 'medium'})){
                         reportsToday += 1;
                     }
-                    if (new Date(datetime).toLocaleString('en-PH', {dateStyle: 'medium'}) == yesterday.toLocaleString('en-PH', {dateStyle: 'medium'})){
+                    if (new Date(submitting_datetime).toLocaleString('en-PH', {dateStyle: 'medium'}) == yesterday.toLocaleString('en-PH', {dateStyle: 'medium'})){
                         reportsYesterday += 1;
                     }
+
+                    const accident = accidentTypes.find(a => a.type === type) || accidentTypes[0];
+
+                    const card = document.createElement("div");
+                    card.className = `report-card ${status}`;
+                    card.style.cursor = "pointer";
+
+                    card.innerHTML = `
+                        <div class="report-icon ${status}">
+                            <i class="${accident.icon}" style="color: ${accident.color};"></i>
+                        </div>
+                        <div class="report-content">
+                            <h3>${type}</h3>
+                            <p><strong>Officer:</strong> ${submitting_officer} • <strong>Location:</strong> ${location}</p>
+                            ${reviewing_reason ? `<small>Reason: ${reviewing_reason}</small>` : ""}
+                        </div>
+                        <div class="report-meta">
+                            <div class="status-badge ${status}">
+                                <i class="fa-solid ${status === 'pending' ? 'fa-clock' : status === 'approved' ? 'fa-check-circle' : 'fa-times-circle'}"></i>
+                                ${status.toUpperCase()}
+                            </div>
+                            <div class="time-ago">${getTimeDifference(new Date(realdatetime), new Date())} ago</div>
+                        </div>
+                    `;
+
+                    card.dataset.casenumber = case_num;
+                    card.dataset.submitting_officer = submitting_officer;
+                    card.dataset.submitting_datetime = submitting_datetime;
+                    card.dataset.location = location;
+                    card.dataset.type = type;
+                    card.dataset.status = status;
+                    card.dataset.video = video;
+                    card.dataset.reviewing_officer = reviewing_officer;
+                    card.dataset.reviewing_datetime = reviewing_datetime;
+                    card.dataset.reviewing_reason = reviewing_reason;
+                    card.dataset.realdatetime = realdatetime;
+
+                    card.onclick = () => openNotificationModal(card.dataset);
+
+                    document.getElementById("reportNotifications").insertBefore(card, document.getElementById("reportNotifications").firstChild);
                 }
                 document.getElementById("reportsTodayh3").innerHTML = reportsToday;
                 document.getElementById("reportsComparedFromYesterday").innerHTML = `+${(reportsToday - reportsYesterday)} from yesterday`;
@@ -319,11 +379,11 @@ function openReportDetailModal(data){
     const infoGrid = document.getElementById("detailModal-info-grid");
     infoGrid.innerHTML = `
     <div class="info-item"><strong>Report ID</strong><p id="modalReportId">${data.casenumber}</p></div>
-    <div class="info-item"><strong>Officer</strong><p id="modalOfficer">${data.officer}</p></div>
-    <div class="info-item"><strong>Submitted</strong><p id="modalDate">${data.datetime}</p></div>
+    <div class="info-item"><strong>Officer</strong><p id="modalOfficer">${data.submitting_officer}</p></div>
+    <div class="info-item"><strong>Accident Date</strong><p id="modalDate">${data.submitting_datetime}</p></div>
     <div class="info-item"><strong>Location</strong><p id="modalLocation">${data.location}</p></div>
     <div class="info-item"><strong>Type</strong><p id="modalType">${data.type}</p></div>
-    <!--<div class="info-item"><strong>Priority</strong><p id="modalPriority"></p></div>-->
+    <div class="info-item"><strong>Submitted</strong><p id="modalDateAgo">${getTimeDifference(new Date(data.realdatetime), new Date())} ago</p></div>
     `;
 
     const req = document.getElementById("btn-req");
@@ -344,10 +404,10 @@ function openReportDetailModal(data){
 function openApproveModal(data){
     document.getElementById('approveId').textContent = data.casenumber;
     document.getElementById('approveTitle').textContent = data.type + " - " + data.location;
-    document.getElementById('approveOfficer').textContent = data.officer;
-    document.getElementById('approveDate').textContent = new Date().toLocaleString('en-PH');
+    document.getElementById('approveOfficer').textContent = data.submitting_officer;
+    document.getElementById('approveDate').textContent = getTimeDifference(new Date(data.realdatetime), new Date()) + " ago";
     document.getElementById('approveType').textContent = data.type;
-    document.getElementById('approveIncidentDate').textContent = data.datetime;
+    document.getElementById('approveIncidentDate').textContent = data.submitting_datetime;
     document.getElementById('approveNote').value = '';
     document.getElementById('approveModal').style.display = 'flex';
 }
@@ -355,10 +415,10 @@ function openApproveModal(data){
 function openDenyModal(data){
     document.getElementById('denyId').textContent = data.casenumber;
     document.getElementById('denyTitle').textContent = data.type + " - " + data.location;
-    document.getElementById('denyOfficer').textContent = data.officer;
-    document.getElementById('denyDate').textContent = new Date().toLocaleString('en-PH');
+    document.getElementById('denyOfficer').textContent = data.submitting_officer;
+    document.getElementById('denyDate').textContent = getTimeDifference(new Date(data.realdatetime), new Date()) + " ago";
     document.getElementById('denyType').textContent = data.type;
-    document.getElementById('denyIncidentDate').textContent = data.datetime;
+    document.getElementById('denyIncidentDate').textContent = data.submitting_datetime;
     document.getElementById('denyNote').value = '';
     document.getElementById('denyModal').style.display = 'flex';
 }
@@ -366,10 +426,10 @@ function openDenyModal(data){
 function openRequestChanges(data){
     document.getElementById('reqId').textContent = data.casenumber;
     document.getElementById('reqTitle').textContent = data.type + " - " + data.location;
-    document.getElementById('reqOfficer').textContent = data.officer;
-    document.getElementById('reqDate').textContent = new Date().toLocaleString('en-PH');
+    document.getElementById('reqOfficer').textContent = data.submitting_officer;
+    document.getElementById('reqDate').textContent = getTimeDifference(new Date(data.realdatetime), new Date()) + " ago";
     document.getElementById('reqType').textContent = data.type;
-    document.getElementById('reqIncidentDate').textContent = data.datetime;
+    document.getElementById('reqIncidentDate').textContent = data.submitting_datetime;
     document.getElementById('reqNote').value = '';
     document.getElementById('requestChangesModal').style.display = 'flex';
 }
@@ -401,89 +461,6 @@ animStyle.textContent = `
 `;
 document.head.appendChild(animStyle);
 
-function addNotification(data){
-    try {
-        let executed = false;
-        let request = new EasyHTTPRequest(`/add-notification?caseNum=${data.casenumber}&submitting_officer=${data.officer}&submitting_datetime=${data.datetime}&location=${data.location}&type=${data.type}&status=${data.status}&video=${data.video}&reviewing_officer=none&reviewing_datetime=none&reason=none`, "POST");
-        request.execute(() => {
-            if (!executed){
-                if (request.request.response == "Success"){
-                    refreshNotifications();
-                    executed = true;
-                }
-            }
-        });
-    } catch (e){
-    }
-}
-
-function refreshNotifications(){
-    try {
-        let executed = false;
-        let request = new EasyHTTPRequest("/admin-get-notifications", "POST");
-        request.execute(() => {
-            if (!executed){
-                let split = request.request.response.substring(1, request.request.response.length - 1).split("), ");
-                document.getElementById("reportNotifications").innerHTML = "";
-                for (let a = 0; a < split.length; a++){
-                    let value_split = split[a].split("', ");
-                    let case_num = value_split[0].substring(2);
-                    let submitting_officer = value_split[1].substring(1);
-                    let submitting_datetime = value_split[2].substring(1);
-                    let location = value_split[3].substring(1);
-                    let type = value_split[4].substring(1);
-                    let status = value_split[5].substring(1);
-                    let video = value_split[6].substring(1);
-                    let reviewing_officer = value_split[7].substring(1);
-                    let reviewing_datetime = value_split[8].substring(1);
-                    let reviewing_reason = value_split[9].substring(1);
-
-                    const accident = accidentTypes.find(a => a.type === type) || accidentTypes[0];
-
-                    const card = document.createElement("div");
-                    card.className = `report-card ${status}`;
-                    card.style.cursor = "pointer";
-
-                    card.innerHTML = `
-                        <div class="report-icon ${status}">
-                            <i class="${accident.icon}" style="color: ${accident.color};"></i>
-                        </div>
-                        <div class="report-content">
-                            <h3>${type}</h3>
-                            <p><strong>Officer:</strong> ${submitting_officer} • <strong>Location:</strong> ${location}</p>
-                            ${reviewing_reason ? `<small>Reason: ${reviewing_reason}</small>` : ""}
-                        </div>
-                        <div class="report-meta">
-                            <div class="status-badge ${status}">
-                                <i class="fa-solid ${status === 'pending' ? 'fa-clock' : status === 'approved' ? 'fa-check-circle' : 'fa-times-circle'}"></i>
-                                ${status.toUpperCase()}
-                            </div>
-                            <div class="time-ago">${submitting_datetime}</div>
-                        </div>
-                    `;
-
-                    card.dataset.casenumber = case_num;
-                    card.dataset.submitting_officer = submitting_officer;
-                    card.dataset.submitting_datetime = submitting_datetime;
-                    card.dataset.location = location;
-                    card.dataset.type = type;
-                    card.dataset.status = status;
-                    card.dataset.video = video;
-                    card.dataset.reviewing_officer = reviewing_officer;
-                    card.dataset.reviewing_datetime = reviewing_datetime;
-                    card.dataset.reviewing_reason = reviewing_reason;
-
-                    card.onclick = () => openNotificationModal(card.dataset);
-
-                    document.getElementById("reportNotifications").insertBefore(card, document.getElementById("reportNotifications").firstChild);
-                }
-                executed = true;
-            }
-        });
-    } catch (e){
-    }
-}
-
 function openNotificationModal(data) {
     const modal = document.getElementById("notificationModal");
 
@@ -500,51 +477,6 @@ function openNotificationModal(data) {
     modalDateTime.innerHTML = `${data.submitting_datetime}`;
 
     modal.classList.add("show");
-    // const title = document.getElementById("modalTitle");
-    // const statusEl = document.getElementById("modalStatus");
-    // const icon = document.getElementById("modalIcon");
-    // const details = document.getElementById("modalDetails");
-    //
-    // title.textContent = data.type;
-    // statusEl.textContent = data.status.toUpperCase();
-    // statusEl.className = `modal-status-text ${data.status}`;
-    // icon.className = `modal-icon-large ${data.status}`;
-    // const accident = accidentTypes.find(a => a.type === data.type) || accidentTypes[0];
-    // icon.innerHTML = `<i class="${accident.icon}" style="color: ${accident.color};"></i>`;
-    //
-    // let content = "";
-    //
-    // if (data.status === "pending") {
-    //     content = `
-    //         <div class="detail-row"><span class="detail-label">Submitted By</span><span class="detail-value">${data.submitting_officer}</span></div>
-    //         <div class="detail-row"><span class="detail-label">Submission Date</span><span class="detail-value">${data.submitting_datetime}</span></div>
-    //         <div class="detail-row"><span class="detail-label">Accident Date & Time</span><span class="detail-value">${data.submitting_datetime}</span></div>
-    //         <div class="detail-row"><span class="detail-label">Location</span><span class="detail-value">${data.location}</span></div>
-    //         <div class="detail-row"><span class="detail-label">Status</span><span class="detail-value pending">Waiting for Admin Review</span></div>
-    //     `;
-    // } else if (data.status === "approved") {
-    //     content = `
-    //         <div class="detail-row"><span class="detail-label">Approved By</span><span class="detail-value">${data.reviewing_officer}</span></div>
-    //         <div class="detail-row"><span class="detail-label">Approved On</span><span class="detail-value">${data.reviewing_datetime}</span></div>
-    //         <div class="detail-row"><span class="detail-label">Officer</span><span class="detail-value">${data.submitting_officer}</span></div>
-    //         <div class="detail-row"><span class="detail-label">Location</span><span class="detail-value">${data.location}</span></div>
-    //         <div class="detail-row"><span class="detail-label">Note</span><span class="detail-value">Report complete and verified</span></div>
-    //     `;
-    // } else if (data.status === "denied") {
-    //     content = `
-    //         <div class="detail-row"><span class="detail-label">Denied By</span><span class="detail-value">${data.reviewing_officer}</span></div>
-    //         <div class="detail-row"><span class="detail-label">Denied On</span><span class="detail-value">${data.reviewing_datetime}</span></div>
-    //         <div class="detail-row"><span class="detail-label">Officer</span><span class="detail-value">${data.submitting_officer}</span></div>
-    //         <div class="detail-row"><span class="detail-label">Location</span><span class="detail-value">${data.location}</span></div>
-    //         <div class="reason-box">
-    //             <strong>Reason for Denial:</strong><br>
-    //             ${data.reviewing_reason || "No reason provided"}
-    //         </div>
-    //     `;
-    // }
-    //
-    // details.innerHTML = content;
-
 }
 
 function closeNotificationModal(){
