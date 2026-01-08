@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, session
 from easy_sql import EasySQL
 import os
+import signal
 import datetime
 
 separator_string = "[sprtr_str]"
@@ -371,6 +372,12 @@ def get_reports():
 @app.route('/admin-get-reports', methods=["POST"])
 def admin_get_reports():
     return str(db.getTableValues("AcciTrack", "AcciTrack_ReportList"))
+
+
+@app.route('/exit')
+def accitrack_exit():
+    os.kill(os.getpid(), signal.SIGINT)
+    return "Exit"
 
 
 if "__main__" == __name__:
