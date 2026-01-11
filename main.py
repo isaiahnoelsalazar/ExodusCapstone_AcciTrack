@@ -387,4 +387,4 @@ if "__main__" == __name__:
         db.createTable("AcciTrack", "AcciTrack_ReportList", report_columns)
         add_officer1()
         add_officer2()
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
